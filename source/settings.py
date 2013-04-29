@@ -6,7 +6,7 @@
 #: for instance: {{site.name}}
 site = {
     "name": "Study Notes",  # your site name
-    "url": "http://lab.lepture.com/liquidluck/",  # your site url
+    "url": "http://vivek.im/notes/",  # your site url
     # "prefix": "blog",
 }
 
@@ -17,7 +17,7 @@ config = {
     "output": "..",
     "static": "../static",
     "static_prefix": "/static/",
-    "permalink": "{{filename}}.html",
+    "permalink": "notes/{{filename}}.html",
     "relative_url": False,
     "perpage": 30,
     "feedcount": 20,
