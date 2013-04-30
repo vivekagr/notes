@@ -3,9 +3,138 @@
     <title>Study Notes</title>
     <link href="http://vivek.im/notes/feed.xml" rel="self" />
     <link href="http://vivek.im/notes/" />
-    <updated>2013-04-03T05:55:37+05:30</updated>
+    <updated>2013-04-30T18:41:04+05:30</updated>
     <id>http://vivek.im/notes/</id>
     <entry>
+        <title type="html"><![CDATA[S1 - Memory, Data and Addressing]]></title>
+        <author><name>Vivek Agarwal</name></author>
+        <link href="http://vivek.im/notes/notes/hw-sw-interface-s1.html"/>
+        <published>2013-04-30T00:00:00+05:30</published>
+        <updated>2013-04-30T18:41:04+05:30</updated>
+        <id>http://vivek.im/notes/notes/hw-sw-interface-s1.html</id>
+        <category scheme="http://vivek.im/notes/tag/hwswint/" term="hwswint" label="hwswint" />
+        <content type="html" xml:base="http://vivek.im/notes/" xml:lang="en">
+            <![CDATA[ <div class="section" id="performance">
+<h2>Performance</h2>
+<p>Performance is not just about CPU clock speed. Data and instructions reside in the memory and they must be fetched to the CPU from memory to operate upon.</p>
+<p>CPU&lt;-&gt;Memory bandwidth can bottleneck performance. Two things can be done for this-
+- Increase memory bandwidth so that more data can travel at a time. (DDR1 -&gt; DDR2 -&gt; DDR3)
+- Move less data into/out of the CPU. This can be achieved by putting a small amount of memory on the CPU itself (which is called cache memory).</p>
+</div>
+<div class="section" id="binary-representations">
+<h2>Binary Representations</h2>
+<p>0s and 1s are represented by high and low voltage. It takes a little bit of time while changing the voltage and it is what limits the speed of the computing system. Electronics are designed to only care about the two specific voltages for 0 and 1 and not care about the voltages in between.</p>
+</div>
+<div class="section" id="representing-information-as-bits-and-bytes">
+<h2>Representing information as bits and bytes</h2>
+<p>We're going to group our binary digits into groups of eight which are called <strong>bytes</strong>. The range can be-</p>
+<p><tt class="docutils literal">00000000</tt><sub>2</sub> - <tt class="docutils literal">11111111</tt><sub>2</sub></p>
+<p>In decimal, the above range can be expressed as-</p>
+<p><tt class="docutils literal">0</tt><sub>10</sub> - <tt class="docutils literal">255</tt><sub>10</sub></p>
+<p>But using binary form to represent data in our programs can get tedious so hexadecimal form is used. Each hexadecimal digit is 4 bit long. A byte can also be represented as two hexadecimal digits. The range can be-</p>
+<p><tt class="docutils literal">00</tt><sub>16</sub> - <tt class="docutils literal">FF</tt><sub>16</sub> (which is also same as <tt class="docutils literal">0</tt><sub>10</sub> - <tt class="docutils literal">225</tt><sub>10</sub>)</p>
+<p>In C, <tt class="docutils literal">FA1D37B</tt><sub>16</sub> can be represented as <tt class="docutils literal">0xFA1D37B</tt> or <tt class="docutils literal">0xfa1d37b</tt>. This is an 8 digit hexadecimal number, so it is 8 x 4 bit = 32 bits or 4 bytes long number.</p>
+</div>
+<div class="section" id="byte-oriented-memory-organization">
+<h2>Byte Oriented Memory Organization</h2>
+<p>Memory is organized in bytes. Basically it is a big long array of bytes. Each byte has an address.</p>
+</div>
+<div class="section" id="machine-words">
+<h2>Machine Words</h2>
+<p>Machine has a &quot;word size&quot;.</p>
+<p>Until recently, most machines used 32-bit (4-byte) words. It limited address to 4GB and it has become too small for memory intensive applications.</p>
+<p>Now, most x86 systems use 64-bit (8-byte) words which has potential address space of 2<sup>64</sup> ~ 1.8 x 10<sup>19</sup> bytes (18EB - exabytes).</p>
+<p>For backward compatibility, many CPUs support different word sizes of 16-bit, 8-bit, 4-bit, 2-bit and 1-bit.</p>
+</div>
+<div class="section" id="word-oriented-memory-organization">
+<h2>Word Oriented Memory Organization</h2>
+<p>Addresses specify location of bytes in memory and each byte has an address.</p>
+<p>In 32-bit systems, 4 bytes have to be grouped together into a word. And 64-bit systems have 8 byte words. So, what address do we give to those word with multiple bytes?</p>
+<p>To maintain uniformity, address of a word is said to be the address of its first byte. [Refer to the last slide in <tt class="docutils literal"><span class="pre">lecture_slides_01_012-memorg.pdf</span></tt>]</p>
+<p>Pointer is a data object that contains an address.</p>
+</div>
+<div class="section" id="byte-ordering">
+<h2>Byte Ordering</h2>
+<p>Say you want to store the 4-byte word <tt class="docutils literal">0xaabbccdd</tt>. In what order will the bytes be stored? There are two different conventions for that.</p>
+<p>Big Endian and Little Endian. (Origin: Gulliver's Travels)</p>
+<p><strong>Big Endian</strong>: The most significant byte of the number goes the lowest address.</p>
+<p><strong>Little Endian</strong>: The least significant byte of the number goes the lowest address.</p>
+<p>Example -</p>
+<p>Variable has 4-byte representation <tt class="docutils literal">0x01234567</tt> and address of variable is <tt class="docutils literal">0x100</tt>.</p>
+<p><strong>Big Endian</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>0x100</td>
+<td>0x101</td>
+<td>0x102</td>
+<td>0x103</td>
+</tr>
+<tr><td>01</td>
+<td>23</td>
+<td>45</td>
+<td>67</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Little Endian</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>0x100</td>
+<td>0x101</td>
+<td>0x102</td>
+<td>0x103</td>
+</tr>
+<tr><td>67</td>
+<td>45</td>
+<td>23</td>
+<td>01</td>
+</tr>
+</tbody>
+</table>
+<p>x86 architecture uses little endian convention.</p>
+</div>
+<div class="section" id="address-and-pointers-in-c">
+<h2>Address and Pointers in C</h2>
+<p>Variable declaration: <tt class="docutils literal">int x, y;</tt></p>
+<p>The two variables will find two locations in memory in which to store 2 integers (1 word each).</p>
+<p>Pointer declaration: <tt class="docutils literal">int *ptr;</tt></p>
+<p>Declares aa variable <tt class="docutils literal">ptr</tt> that is a pointer to a data item that in an integer. This will store an address rather than a value.</p>
+<p>Assignment to a pointer: <tt class="docutils literal">ptr = &amp;x;</tt></p>
+<p>This assigns ptr to point to the address where x is located. <tt class="docutils literal">&amp;</tt> is used to get the address of a variable.</p>
+<p>Get value pointed to by a pointer:</p>
+<p>Dereference operator (<tt class="docutils literal">*</tt>) is used to get the value pointed to by a pointer. <tt class="docutils literal">*ptr</tt> will give us the value at the memory address given by the value of <tt class="docutils literal">ptr</tt>.</p>
+<p>Examples</p>
+<ul class="simple">
+<li>If <tt class="docutils literal">ptr = &amp;x;</tt> then <tt class="docutils literal">y = *ptr + 1</tt> is same as <tt class="docutils literal">y = x + 1</tt>.</li>
+<li><tt class="docutils literal"><span class="pre">*(&amp;y)</span></tt> is equivalent to <tt class="docutils literal">y</tt>.</li>
+</ul>
+<p>We can do arithmetic on pointers.</p>
+<p><tt class="docutils literal">ptr = ptr + 1</tt> - Since type of ptr is int and an int uses 4 bytes, C automatically adds (1 x 4 =) 4. But this can be dangerous if we don't exactly know what is present at the next memory address.</p>
+</div>
+<div class="section" id="assignment-in-c">
+<h2>Assignment in C</h2>
+<p>Left-Hand-Side = Right-Hand-Side</p>
+<p>LHS must evaluate to a memory location (variable).</p>
+<p>RHS must evaluate to a value (could be an address).</p>
+<p><tt class="docutils literal">int x, y; x = y + 3;</tt> - Get value at y, add 3, put it in x</p>
+<p><tt class="docutils literal">int *x; int y; x = &amp;y + 3;</tt> - Get address of y, add (3 x 4 =) 12 to it, put it in x</p>
+<p><tt class="docutils literal">*x = y;</tt> - Here <tt class="docutils literal">*</tt> says to the compiler not to use <tt class="docutils literal">x</tt> itself as the variable rather get the value stored at x, interpret it as an address, put value of y at that address.</p>
+</div>
+]]>
+        </content>
+    </entry><entry>
         <title type="html"><![CDATA[JavaScript Basics]]></title>
         <author><name>Vivek Agarwal</name></author>
         <link href="http://vivek.im/notes/notes/javascript-basics.html"/>
