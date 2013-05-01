@@ -50,7 +50,7 @@ Machine Words
 
 Machine has a "word size".
 
-Until recently, most machines used 32-bit (4-byte) words. It limited address to 4GB and it has become too small for memory intensive applications.
+Until recently, most machines used 32-bit (4-byte) words. It limited address to 4GB (2^32 bytes) and it has become too small for memory intensive applications.
 
 Now, most x86 systems use 64-bit (8-byte) words which has potential address space of 2\ :sup:`64`\  ~ 1.8 x 10\ :sup:`19`\  bytes (18EB - exabytes).
 

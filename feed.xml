@@ -3,14 +3,702 @@
     <title>Study Notes</title>
     <link href="http://vivek.im/notes/feed.xml" rel="self" />
     <link href="http://vivek.im/notes/" />
-    <updated>2013-04-30T21:10:03+05:30</updated>
+    <updated>2013-05-02T01:48:00+05:30</updated>
     <id>http://vivek.im/notes/</id>
     <entry>
+        <title type="html"><![CDATA[S2 - Integer and Floating Point Numbers]]></title>
+        <author><name>Vivek Agarwal</name></author>
+        <link href="http://vivek.im/notes/notes/hw-sw-interface-s2.html"/>
+        <published>2013-05-01T00:00:00+05:30</published>
+        <updated>2013-05-02T01:48:00+05:30</updated>
+        <id>http://vivek.im/notes/notes/hw-sw-interface-s2.html</id>
+        <category scheme="http://vivek.im/notes/tag/hwswint/" term="hwswint" label="hwswint" />
+        <content type="html" xml:base="http://vivek.im/notes/" xml:lang="en">
+            <![CDATA[ <div class="section" id="unsigned-integers">
+<h2>Unsigned Integers</h2>
+<p>Possible number of values for N bits = 2<sup>N</sup> - 1</p>
+<p>Addition/Subtraction can be done with the normal &quot;carry/borrow&quot; rules.</p>
+</div>
+<div class="section" id="signed-integers">
+<h2>Signed Integers</h2>
+<p>For unsigned integers example:</p>
+<p>8 bits: <tt class="docutils literal">0x00=0</tt>, <tt class="docutils literal">0x01=1</tt>, ..., <tt class="docutils literal">0x7F=127</tt></p>
+<p>But we need half of them to be negative.</p>
+<p>The high order bit is used to indicate negative. This is called &quot;sign-and-magnitude&quot; representation.</p>
+<p>Example:</p>
+<ul class="simple">
+<li><tt class="docutils literal">0x00</tt> = 00000000<sub>2</sub> is non-negative, because the sign bit is 0</li>
+<li><tt class="docutils literal">0x7F</tt> = 01111111<sub>2</sub> is non-negative</li>
+<li><tt class="docutils literal">0x85</tt> = 10000101<sub>2</sub> is negative</li>
+<li><tt class="docutils literal">0x80</tt> = 10000000<sub>2</sub> is negative</li>
+</ul>
+<p>But there are two values for <tt class="docutils literal">0</tt><sub>10</sub> : <tt class="docutils literal">0x00</tt> (+0) and <tt class="docutils literal">0x80</tt> (-0).</p>
+<p>This can create problems for example:</p>
+<p>4 - 3 = <tt class="docutils literal">0100</tt><sub>2</sub> - <tt class="docutils literal">0011</tt><sub>2</sub> = <tt class="docutils literal">0001</tt><sub>2</sub> = 1</p>
+<p>4 + (-3) = <tt class="docutils literal">0100</tt><sub>2</sub> + <tt class="docutils literal">1011</tt><sub>2</sub> = <tt class="docutils literal">1111</tt><sub>2</sub> = -7</p>
+<p>Therefore, 4 - 3 != 4 + (-3)</p>
+<p>We do not want this! Instead what is used is two's complement negatives.</p>
+</div>
+<div class="section" id="two-s-complement-negatives">
+<h2>Two's Complement Negatives</h2>
+<p>Rather than having a sign bit as in Signed integers, let the most significant bit have the same value but negative weight.</p>
+<p>Example:</p>
+<ul class="simple">
+<li>unsigned 1010<sub>2</sub> : 1*2<sup>3</sup> + 0*2<sup>2</sup> + 1*2<sup>1</sup> + 0*2<sup>0</sup> = 10<sub>10</sub></li>
+<li>2's comp 1010<sub>2</sub> : -1*2<sup>3</sup> + 0*2<sup>2</sup> + 1*2<sup>1</sup> + 0*2<sup>0</sup> = -6<sub>10</sub></li>
+</ul>
+<p>-1 is represented as <tt class="docutils literal">1111</tt><sub>2</sub>, all negative integers still have MSB = 1. Also, there is only one zero.</p>
+<p>To get the negative representation of any integer, take bitwise compliment and then add one!</p>
+<p><tt class="docutils literal">~x + 1 = <span class="pre">-x</span></tt></p>
+<p>Arithmetic example:</p>
+<ul class="simple">
+<li>4 + 3 = <tt class="docutils literal">0100</tt> + <tt class="docutils literal">0011</tt> = <tt class="docutils literal">0111</tt> = 7</li>
+<li>-4 + 3 = <tt class="docutils literal">1100</tt> + <tt class="docutils literal">0011</tt> = <tt class="docutils literal">1111</tt> = -1</li>
+<li>4 - 3 = <tt class="docutils literal">0100</tt> + <tt class="docutils literal">1101</tt> = <tt class="docutils literal">10001</tt> = <tt class="docutils literal">0001</tt> = 1</li>
+</ul>
+<p>Here in the last example, the highest carry bit is dropped. This is called modular addition.</p>
+</div>
+<div class="section" id="signed-and-unsigned-numeric-values">
+<h2>Signed and Unsigned Numeric Values</h2>
+<p>Both signed and unsigned integers have limits. For 4 bit values:</p>
+<ul class="simple">
+<li>If you compute a number that is too big like 6 + 4 = ? or 15U + 2U = ?</li>
+<li>If you compute a numbet that is too small like -7 -3 = ? or 0U - 2U = ?</li>
+</ul>
+<p>The CPU may be capable of &quot;throwing an exception&quot; for overflow on signed values but it won't for unsigned. C &amp; Java don't give a fuck when this happens and silently cruise along. We need to be careful about this and explicitly check.</p>
+</div>
+<div class="section" id="values-to-remember">
+<h2>Values to remember</h2>
+<p>Unsigned Values:</p>
+<ul class="simple">
+<li>UMin = 0 (<tt class="docutils literal"><span class="pre">000...0</span></tt>)</li>
+<li>UMax = 2<sup>w</sup> - 1 (<tt class="docutils literal"><span class="pre">111...1</span></tt>)</li>
+</ul>
+<p>Two's Complement Values:</p>
+<ul class="simple">
+<li>TMin = -2<sup>w-1</sup> (<tt class="docutils literal"><span class="pre">100...0</span></tt>)</li>
+<li>TMax = 2<sup>w-1</sup> - 1 (<tt class="docutils literal"><span class="pre">011..1</span></tt>)</li>
+<li>Negative 1 = <tt class="docutils literal"><span class="pre">111...1</span></tt> or 0xFFFFFFFF (32-bits)</li>
+</ul>
+<p>Values for W = 16 (16-bit systems)</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="17%" />
+<col width="21%" />
+<col width="44%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head" rowspan="2">&nbsp;</th>
+<th class="head" rowspan="2">Decimal</th>
+<th class="head" rowspan="2">Hex</th>
+<th class="head" rowspan="2">Binary</th>
+</tr>
+<tr></tr>
+</thead>
+<tbody valign="top">
+<tr><td>UMax</td>
+<td>65535</td>
+<td><tt class="docutils literal">FF FF</tt></td>
+<td><tt class="docutils literal">11111111 11111111</tt></td>
+</tr>
+<tr><td>TMax</td>
+<td>32767</td>
+<td><tt class="docutils literal">7F FF</tt></td>
+<td><tt class="docutils literal">01111111 11111111</tt></td>
+</tr>
+<tr><td>TMin</td>
+<td>-32768</td>
+<td><tt class="docutils literal">80 00</tt></td>
+<td><tt class="docutils literal">10000000 00000000</tt></td>
+</tr>
+<tr><td>-1</td>
+<td>-1</td>
+<td><tt class="docutils literal">FF FF</tt></td>
+<td><tt class="docutils literal">11111111 11111111</tt></td>
+</tr>
+<tr><td>0</td>
+<td>0</td>
+<td><tt class="docutils literal">00 00</tt></td>
+<td><tt class="docutils literal">00000000 00000000</tt></td>
+</tr>
+</tbody>
+</table>
+<p>Some observations:</p>
+<ul>
+<li><div class="first line-block">
+<div class="line">TMin | = TMax + 1</div>
+</div>
+</li>
+<li><p class="first">UMax = 2 * TMax + 1</p>
+</li>
+</ul>
+</div>
+<div class="section" id="integers-in-c">
+<h2>Integers in C</h2>
+<p>C has support for unsigned and signed numbers with <tt class="docutils literal">#include&lt;limits.h&gt;</tt>. In this header file, there are some contants pre-declared for us such as:</p>
+<ul class="simple">
+<li>ULONG_MAX</li>
+<li>LONG_MAX</li>
+<li>LONG_MIN</li>
+</ul>
+<p>These values are platform specific.</p>
+<p><strong>Constants</strong></p>
+<ul class="simple">
+<li>By default, constants are considered signed integers</li>
+<li>Use &quot;U&quot; suffix to force unsigned, e.g. <tt class="docutils literal">0U</tt>, <tt class="docutils literal">4294967259U</tt></li>
+</ul>
+<p><strong>Casting</strong></p>
+<ul class="simple">
+<li><tt class="docutils literal">int tx, ty;</tt> - signed integer</li>
+<li><tt class="docutils literal">unsigned ux, uy;</tt> - unsigned integer</li>
+<li><tt class="docutils literal">tx = (int) ux;</tt> - unsigned casted as signed integer</li>
+<li><tt class="docutils literal">uy = (unsigned) ty;</tt> - signed casted as unsigned integer</li>
+<li><tt class="docutils literal">tx = ux</tt> - implicit casting also occurs via assignments and function calls</li>
+<li><tt class="docutils literal">uy = ty</tt> - same as above</li>
+<li>The <tt class="docutils literal">gcc</tt> flag <tt class="docutils literal"><span class="pre">-Wsign-convention</span></tt> produces warning for implicit casts, but <tt class="docutils literal"><span class="pre">-Wall</span></tt> doesn't.</li>
+</ul>
+<p>Here, the bits are unchanged, they are just interpreted differently.</p>
+<p>Some casting surprises:</p>
+<ul class="simple">
+<li>If signed and unsigned are mixed in a single expression, then signed values are implicitly casted to unsigned.</li>
+<li>Including comparision operators &lt;, &gt;, ==, &lt;=, &gt;=</li>
+</ul>
+</div>
+<div class="section" id="shift-operations-for-unsigned-integers">
+<h2>Shift operations for Unsigned Integers</h2>
+<p>Left Shift: x&lt;&lt;y</p>
+<ul class="simple">
+<li>Shift bit-vector x left by y positions.</li>
+<li>Throw away extra bits on the left and fill with <tt class="docutils literal">0s</tt> on the right.</li>
+</ul>
+<p>Right Shift: x&gt;&gt;y</p>
+<ul class="simple">
+<li>Shift bit-vector x right by y positions.</li>
+<li>Throw away extra bits on the right and fill with <tt class="docutils literal">0s</tt> on the left.</li>
+</ul>
+<table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="76%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">x</th>
+<th class="head"><tt class="docutils literal">00000110</tt> (6)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>&lt;&lt; 3</td>
+<td><tt class="docutils literal">00110000</tt> (48)</td>
+</tr>
+<tr><td>&gt;&gt; 2</td>
+<td><tt class="docutils literal">00000001</tt> (1)</td>
+</tr>
+</tbody>
+</table>
+<p>Here, when we left-shifted binary of 6 by 3 positions, we multiplied 6 by 2<sup>3</sup> which yielded 48.</p>
+<p>When we right-shifted binary of 6 by 2 positions, we divided it by 2<sup>2</sup> which should have yielded 1.5 but since we can't represent fraction, so the result was 1.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="82%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">x</th>
+<th class="head"><tt class="docutils literal">11110010</tt> (242)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>&lt;&lt; 3</td>
+<td><tt class="docutils literal">10010000</tt> (144 - wrong)</td>
+</tr>
+<tr><td>&gt;&gt; 2</td>
+<td><tt class="docutils literal">00111100</tt> (60)</td>
+</tr>
+</tbody>
+</table>
+<p>Here, when binary of 242 was left-shifted by 3 positions, the result should have been 242 * 2<sup>3</sup> = 1936 but instead we got 144 since 1936 doesn't fits in 8 bit and additional bits on the left were dropped.</p>
+<p>When binary of 242 was right-shifted by 2 positions, we got the correct result of 242 / 2<sup>2</sup>  = 60.5 (rounded down to 60).</p>
+</div>
+<div class="section" id="shift-operations-for-signed-integers">
+<h2>Shift operations for signed integers</h2>
+<p>Left Shift: x&lt;&lt;y</p>
+<ul class="simple">
+<li>Equivalent to multiplying x by 2<sup>y</sup> </li>
+<li>(if resulting value fits, no 1s are lost)</li>
+</ul>
+<p>Right Shift: x&gt;&gt;y</p>
+<ul class="simple">
+<li>Logical Shift (for unsigned values) - fill with 0s on the left</li>
+<li>Arithmetic Shift (for signed values) - replicate MSB on left and maintains sign of x</li>
+<li>Equivalent to dividing x by 2<sup>y</sup> </li>
+</ul>
+<table border="1" class="docutils">
+<colgroup>
+<col width="39%" />
+<col width="61%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">x</th>
+<th class="head"><tt class="docutils literal">01100010</tt> (98)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>&lt;&lt; 3</td>
+<td><tt class="docutils literal">00010000</tt> (16 - wrong)</td>
+</tr>
+<tr><td>Logical &gt;&gt; 2</td>
+<td><tt class="docutils literal">00011000</tt> (24)</td>
+</tr>
+<tr><td>Arithmetic &gt;&gt; 2</td>
+<td><tt class="docutils literal">00011000</tt> (24)</td>
+</tr>
+</tbody>
+</table>
+<p>Now with a negative integer.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="39%" />
+<col width="61%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">x</th>
+<th class="head"><tt class="docutils literal">10100010</tt> (-94)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>&lt;&lt; 3</td>
+<td><tt class="docutils literal">00010000</tt> (16 - wrong)</td>
+</tr>
+<tr><td>Logical &gt;&gt; 2</td>
+<td><tt class="docutils literal">00101000</tt> (40 - wrong)</td>
+</tr>
+<tr><td>Arithmetic &gt;&gt; 2</td>
+<td><tt class="docutils literal">11101000</tt> (-24)</td>
+</tr>
+</tbody>
+</table>
+<p>Here, in the last arithmetic right shift, the MSB 1 instead of 0 was added to the left.</p>
+<p>Undefined behavior occurs in C when <tt class="docutils literal">y &lt; 0</tt> or <tt class="docutils literal">y &gt;= word_size</tt>.</p>
+</div>
+<div class="section" id="using-shifts-and-masks">
+<h2>Using Shifts and Masks</h2>
+<p>Extract the 2nd most significant byte of an integer.</p>
+<ul class="simple">
+<li>Let x be <tt class="docutils literal">00110101 01100010 10011010 01010010</tt>.</li>
+<li>First we do right shift operation <tt class="docutils literal">x &gt;&gt; 16</tt> and get <tt class="docutils literal">00000000 00000000 00110101 01100010</tt>.</li>
+<li>And then we do bitwise <tt class="docutils literal">&amp;</tt> operation with <tt class="docutils literal">0xFF</tt> which in binary is <tt class="docutils literal">00000000 00000000 00000000 11111111</tt>.</li>
+<li>The result of the above <tt class="docutils literal">&amp;</tt> operation is <tt class="docutils literal">00000000 00000000 00000000 01100010</tt>.</li>
+</ul>
+<p>Extract the sign bit of signed integer.</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">(x&gt;&gt;31)</span> &amp; 1</tt> - need the <tt class="docutils literal">&amp; 1</tt> to clear out all other bits except LSB.</li>
+</ul>
+<p>Conditionals as Boolean expressions (assuming x is 0 or 1)</p>
+<ul>
+<li><p class="first"><tt class="docutils literal">if (x) a=y else a=z;</tt> which is same as <tt class="docutils literal">a = x ? y : z;</tt></p>
+</li>
+<li><dl class="first docutils">
+<dt>Can be re-written (assuming arithmetic right shift) as:</dt>
+<dd><p class="first last"><tt class="docutils literal">a = <span class="pre">((x&lt;&lt;31)</span> &gt;&gt; 31) &amp; y + <span class="pre">(((!x)&lt;&lt;31)</span> &gt;&gt; 31) &amp; z;</tt></p>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="section" id="sign-extension-example">
+<h2>Sign Extension Example</h2>
+<p>Here, we will convert from smaller to larger integer data type. C automatically performs sign extension.</p>
+<div class="highlight"><pre><span class="kt">short</span> <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">12345</span><span class="p">;</span> <span class="c1">// 16 bits</span>
+<span class="kt">int</span> <span class="n">ix</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="n">x</span><span class="p">;</span> <span class="c1">// 32 bits</span>
+<span class="kt">short</span> <span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="o">-</span><span class="mi">12345</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">iy</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="n">y</span><span class="p">;</span>
+</pre></div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="6%" />
+<col width="13%" />
+<col width="24%" />
+<col width="58%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">&nbsp;</th>
+<th class="head">Decimal</th>
+<th class="head">Hex</th>
+<th class="head">Binary</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>x</td>
+<td>12345</td>
+<td><tt class="docutils literal">30 39</tt></td>
+<td><tt class="docutils literal">00110000 01101101</tt></td>
+</tr>
+<tr><td>ix</td>
+<td>12345</td>
+<td><tt class="docutils literal">00 00 30 39</tt></td>
+<td><tt class="docutils literal">00000000 00000000 00110000 01101101</tt></td>
+</tr>
+<tr><td>y</td>
+<td>-12345</td>
+<td><tt class="docutils literal">CF C7</tt></td>
+<td><tt class="docutils literal">11001111 11000111</tt></td>
+</tr>
+<tr><td>iy</td>
+<td>-12345</td>
+<td><tt class="docutils literal">FF FF CF C7</tt></td>
+<td><tt class="docutils literal">11111111 11111111 11001111 11000111</tt></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="fractional-binary-numbers">
+<h2>Fractional Binary Numbers</h2>
+<p>Some examples:</p>
+<ul class="simple">
+<li><tt class="docutils literal">1011.101</tt><sub>2</sub>  is equal to <tt class="docutils literal">8 + 2 + 1 + 1/2 + 1/8</tt><sub>10</sub> .</li>
+<li>5 and 3/4 = <tt class="docutils literal">101.11</tt><sub>2</sub> </li>
+<li>2 and 7/8 = <tt class="docutils literal">10.111</tt><sub>2</sub> </li>
+<li>63/64 = <tt class="docutils literal">0.111111</tt><sub>2</sub> </li>
+</ul>
+<p>Observations:</p>
+<ul>
+<li><p class="first">Divide by 2 by shifting right</p>
+</li>
+<li><p class="first">Multiply by 2 by shifting left</p>
+</li>
+<li><dl class="first docutils">
+<dt>Numbers of form 0.111111111....<sub>2</sub>  are just below 1.0</dt>
+<dd><p class="first last">1/2 + 1/4 + 1/8 + ... + 1/2<sup>i</sup>  + ... ---&gt; 1.0
+Shorthand notation for all 1 bits to the right of binary point: 1.0 - e (epsilon)</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Limitations:</p>
+<ul>
+<li><p class="first">Can only exactly represent numbers that can be written as x * 2<sup>y</sup> </p>
+</li>
+<li><dl class="first docutils">
+<dt>Other rational numbers have repeating bit representations, e.g.:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><tt class="docutils literal">1/3</tt> = 0.0101010101[01]<sub>...2</sub> </dt>
+<dd><ul class="first last simple">
+<li><tt class="docutils literal">1/5</tt> = 0.001100110011[0011]<sub>...2</sub> </li>
+<li><tt class="docutils literal">1/10</tt> = 0.0001100110011[0011]<sub>...2</sub> </li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="section" id="fixed-point-representations">
+<h2>Fixed Point Representations</h2>
+<p>We might try representing fractional binary numbers by picking a fixed place for an implied binary point.</p>
+<p>Lets do that, using 8-bit fixed point numbers as an example:</p>
+<ul>
+<li><dl class="first docutils">
+<dt>#1 the binary point is between bits 2 and 3</dt>
+<dd><p class="first last">b<sub>7</sub> b<sub>6</sub> b<sub>5</sub> b<sub>4</sub> b<sub>3</sub>  [.] b<sub>2</sub> b<sub>1</sub> b<sub>0</sub>  - The maximum value that can be represented with this is 31 and 7/8.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>#2: the binary point is between bits 4 and 5</dt>
+<dd><p class="first last">b<sub>7</sub> b<sub>6</sub> b<sub>5</sub>  [.] b<sub>4</sub> b<sub>3</sub> b<sub>2</sub> b<sub>1</sub> b<sub>0</sub>  - The maximum value that can be represented with this is 7 and 31/32.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>The position of the binary point affects the range and precision of the representation.</p>
+<ul class="simple">
+<li>range: diff between largest and smallest numbers possible</li>
+<li>precision: smallest possible difference between any two numbers</li>
+</ul>
+<p>One of the pros of fixed point representations is that it's simple. The same hardware that does integer arithmetic can do fixed point arithmetic.</p>
+<p>But there is a bigger con to it. There is no good way to pick where the fixed point should be. Either the precision or the range has to be sacrificed each time. <strong>This is why fixed point representations are not used.</strong></p>
+</div>
+<div class="section" id="ieee-floating-point">
+<h2>IEEE Floating Point</h2>
+<p>It is analogous to scientific notation. For example, we represent 12000000 as 1.2 x 10<sup>7</sup> ; and 0.0000012 as 1.2 x 10<sup>-6</sup> . In C, these can be written as <tt class="docutils literal">1.2e7</tt> and <tt class="docutils literal"><span class="pre">1.2e-7</span></tt> respectively.</p>
+<p>This is an IEEE standard established in 1985 for floating point arithmetic and is supported by all major CPUs today. This is fast at hardware level but is numerically well behaved.</p>
+</div>
+<div class="section" id="floating-point-representation">
+<h2>Floating Point Representation</h2>
+<p>Numerical form:</p>
+<p>V<sub>10</sub>  = (-1)<sup>s</sup>  * M * 2<sup>E</sup> </p>
+<ul class="simple">
+<li>Sign bit s determines whether the number is negative or positive</li>
+<li>Significand (mantissa) M normally a fraction value in range [1.0, 2.0)</li>
+<li>Exponent E weights value by a (possibly negative) power of two</li>
+</ul>
+<p>Representation in memory</p>
+<ul class="simple">
+<li>MSB s is sign bit s</li>
+<li>exp field encodes E (but is not equal to E)</li>
+<li>frac field encodes M (but is not equal to M)</li>
+</ul>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="30%" />
+<col width="63%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>s</td>
+<td>exp</td>
+<td>frac</td>
+</tr>
+</tbody>
+</table>
+<p>Single precision: 32 bits</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="29%" />
+<col width="58%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>s (1)</td>
+<td>exp (8)</td>
+<td>frac (23 bits)</td>
+</tr>
+</tbody>
+</table>
+<p>Double precision: 64 bits</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="29%" />
+<col width="58%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>s (1)</td>
+<td>exp (11)</td>
+<td>frac (52 bits)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="normalization-and-special-values">
+<h2>Normalization and Special Values</h2>
+<p>Normalized means the mantissa M has the form 1.xxxxxx</p>
+<ul class="simple">
+<li>0.0011 x 2<sup>5</sup>  and 1.1 x 2<sup>3</sup> represent the same number, but the latter makes better use of the available bits.</li>
+<li>Since we know that mantissa starts with a 1, we don't bother to store it thus saving a bit.</li>
+</ul>
+<p>Now, how do we represent <tt class="docutils literal">0.0</tt>? Or special/undefined values like <tt class="docutils literal">1.0/0.0</tt>?</p>
+<p>For these cases, there are some special values reserved for <tt class="docutils literal">exp</tt> and <tt class="docutils literal">frac</tt>.</p>
+<ul>
+<li><p class="first">A bit pattern <tt class="docutils literal"><span class="pre">00...0</span></tt> represents zero</p>
+</li>
+<li><dl class="first docutils">
+<dt>If <tt class="docutils literal">exp == <span class="pre">11...1</span></tt> and <tt class="docutils literal">frac == <span class="pre">00...0</span></tt>, it represents infinity</dt>
+<dd><p class="first last">e.g. 1.0/0.0 = -1.0/-0.0 = +infinity, 1.0/-0.0 = -1.0/0.0 = -infinity</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>If <tt class="docutils literal">exp == <span class="pre">11...1</span></tt> and <tt class="docutils literal">frac != <span class="pre">00...0</span></tt>, it represents <tt class="docutils literal">NaN</tt>: <cite>Not a Number</cite>.</dt>
+<dd><p class="first last">Results from operations with undefined results, e.g. sqrt(-1), infinity, -infinity, infinity * 0</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Since, <tt class="docutils literal"><span class="pre">000...0</span></tt> and <tt class="docutils literal"><span class="pre">111...1</span></tt> are already reserved above as special values, we can't use them.</p>
+<p>So, the condition: <tt class="docutils literal">exp != <span class="pre">000...0</span> and exp != <span class="pre">111...1</span></tt>.</p>
+<p><strong>Exponent is coded as biased value:</strong> <tt class="docutils literal">E = exp - Bias</tt></p>
+<ul>
+<li><p class="first"><tt class="docutils literal">exp</tt> is an unsigned value ranging from 1 to 2<sup>k</sup>  - 2 (k == # bits in the <tt class="docutils literal">exp</tt>)</p>
+</li>
+<li><dl class="first docutils">
+<dt>Bias = 2<sup>k-1</sup>  - 1</dt>
+<dd><ul class="first last simple">
+<li>Single precision: 127  (so exp: 1...254, E: -126...127)</li>
+<li>Double precision: 1023 (so exp: 1...2046, E: -1022...1023)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">This enables negative values for E, for representing very small values.</p>
+</li>
+</ul>
+<p><strong>Significand coded with implied leading 1</strong>: <tt class="docutils literal">M = <span class="pre">1.xxx...x</span></tt><sub>2</sub> </p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">xxx...x</span></tt>: the n bits of frac</li>
+<li>Minimum when 000...0 (M = 1.0)</li>
+<li>Maximum when 111...1 (M = 2.0 - e(epsilon))</li>
+<li>Get extra leading bit for &quot;free&quot;</li>
+</ul>
+</div>
+<div class="section" id="normalized-encoding-example">
+<h2>Normalized Encoding Example</h2>
+<p><strong>Value</strong>: <tt class="docutils literal">float f = 12345.0;</tt> (with single precision, 32-bits)</p>
+<p><tt class="docutils literal">12345</tt><sub>2</sub>  = <tt class="docutils literal">11000000111001</tt><sub>2</sub>  = <tt class="docutils literal">1.1000000111001</tt><sub>2</sub>  x 2<sup>13</sup> </p>
+<p><strong>Singnificand</strong>:</p>
+<p>M    = <tt class="docutils literal">1.1000000111001</tt><sub>2</sub> frac = <tt class="docutils literal">10000001110010000000000</tt><sub>2</sub> </p>
+<p><strong>Exponent</strong>: E = exp - Bias, so exp = E + Bias</p>
+<p>E = 13, Bias = 127, so exp = 140 = <tt class="docutils literal">10001100</tt><sub>2</sub> </p>
+<p>Result</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="29%" />
+<col width="58%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>s (1)</td>
+<td>exp (8)</td>
+<td>frac (23 bits)</td>
+</tr>
+<tr><td>0</td>
+<td>10001100</td>
+<td>10000001110010000000000</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="floating-point-operations">
+<h2>Floating Point Operations</h2>
+<p>Unlike the representation for integers, the representation for floating-point number is not exact because mantissa doesn't go on forever and stops at 23 bits or even 52 bits in double precision.</p>
+<p>Basic idea:</p>
+<ul>
+<li><p class="first">First, compute the exact result</p>
+</li>
+<li><dl class="first docutils">
+<dt>Then, round the result to make it fit into desired precision:</dt>
+<dd><ul class="first last simple">
+<li>Possibly overflow if the exponent is too large</li>
+<li>Possibly drop least significant bits of significand to fit into <tt class="docutils literal">frac</tt></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>For rounding a value, there are many possible rounding modes like round towards zero, round down, round up, round to nearest value and round to even. With most of these values, errors start accumulating when rounding is repeated on the same value and this causes statistical bias. However, with round to even avoids this bias by rounding up about half the time and rounding down half the time. The <strong>default rounding mode for IEEE floating point is Round-to-even</strong>.</p>
+<p>If overflow of the exponent occurs, result will be infinity or -infinity. Floats with value of inifinity, -inifinity and NaN can be used in operations but the result is usually still inifinity, -inifinity, or NaN.</p>
+<p><strong>Floating point operations are not always associative or distributive, due to rounding!</strong></p>
+<ul class="simple">
+<li>(3.14 + 1e10) - 1e10 != 3.14 + (1e10 - 1e10)</li>
+<li>1e20 * (1e20 - 1e20) != (1e20 * 1e20) - (1e20 * 1e20)</li>
+</ul>
+<p>Here, in the first example, in the LSH, when <tt class="docutils literal">(3.14 + 1e10)</tt> is computed, <tt class="docutils literal">3.14</tt> so small against <tt class="docutils literal">1e10</tt> that after adding these two and trying to fit it into the 23 bits, the least significant bits are dropped and thus the result is <tt class="docutils literal">1e10</tt>. So, LSH computes to <tt class="docutils literal">1e10 - 1e10 = 0</tt>. While on the RHS, <tt class="docutils literal">3.14 + (1e10 - 1e10) = 3.14</tt>.</p>
+<p>In the second example, LSH simply computes to <tt class="docutils literal">0</tt>. While on the RHS, <tt class="docutils literal">(1e20 * 1e20)</tt> causes overflow and results infinity. So, RHS computes to <tt class="docutils literal">infinity - infinity = infinity</tt>.</p>
+</div>
+<div class="section" id="floating-point-in-c">
+<h2>Floating Point in C</h2>
+<p>C offers two levels of precision</p>
+<ul class="simple">
+<li><tt class="docutils literal">float</tt> - single precision (32-bit)</li>
+<li><tt class="docutils literal">double</tt> - double precision (64-bit)</li>
+</ul>
+<p>Default rounding mode is round-to-even. There is a header file <tt class="docutils literal">#include &lt;math.h&gt;</tt> to get INFINITY and NAN constants.</p>
+<p><strong>Equality comparisions ``==`` between floating point numbers are tricky, and ofter return unexpected results. AVOID THEM!!!</strong> Rather, subtract them and test if the value is small.</p>
+</div>
+<div class="section" id="coversion-between-data-types">
+<h2>Coversion between data types</h2>
+<p>Casting between int, float, and double changes the bit representation.</p>
+<ul class="simple">
+<li><tt class="docutils literal">int <span class="pre">--&gt;</span> float</tt> - May be rounded but overflow not possible since float can accomodate much larger values than int.</li>
+<li><tt class="docutils literal">int <span class="pre">--&gt;</span> double</tt> - Exact conversion as long as int has &lt;= 53-bit word size since double has 52 bits for mantissa part (the leading 1 is not stored to the int can be 52+1 bit long) else rounding occurs.</li>
+<li><tt class="docutils literal">float <span class="pre">--&gt;</span> double</tt> - Exact conversion since float is 32-bits and 64-bits, so double can definitely store a float representation in it.</li>
+<li><tt class="docutils literal">double or float <span class="pre">--&gt;</span> int</tt> - Fractional part is truncated (rounded towards zero). And if the double/float representation is too large or too small, then int is generally set as Tmin or NaN or infinity...</li>
+</ul>
+</div>
+<div class="section" id="summary">
+<h2>Summary</h2>
+<p>Zero</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="26%" />
+<col width="66%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>0</td>
+<td>00000000</td>
+<td>00000000000000000000000</td>
+</tr>
+</tbody>
+</table>
+<p>Normalized values</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="7%" />
+<col width="51%" />
+<col width="42%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>s</td>
+<td>1 to 2<sup>k</sup> -2</td>
+<td>significand = 1.M</td>
+</tr>
+</tbody>
+</table>
+<p>Infinity</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="26%" />
+<col width="66%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>s</td>
+<td>11111111</td>
+<td>00000000000000000000000</td>
+</tr>
+</tbody>
+</table>
+<p>NaN</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="26%" />
+<col width="66%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>s</td>
+<td>11111111</td>
+<td>non-zero</td>
+</tr>
+</tbody>
+</table>
+<p>Denormalized values</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="26%" />
+<col width="66%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>s</td>
+<td>00000000</td>
+<td>significand = 0.M</td>
+</tr>
+</tbody>
+</table>
+<p>As with integers, float suffers from fixed number of bits available to represent them.</p>
+<ul class="simple">
+<li>Can get overflow/underflow, just like ints</li>
+<li>Some &quot;simple fractions&quot; have no exact representations (e.g. 0.2)</li>
+<li>Can also lose precision, unlike ints. Every operation gets a slightly wrong result.</li>
+</ul>
+<p>Mathematically equivalent ways of writing an expression may compute differet results.</p>
+<p>Never test floating point values for equality.</p>
+</div>
+]]>
+        </content>
+    </entry><entry>
         <title type="html"><![CDATA[S1 - Memory, Data and Addressing]]></title>
         <author><name>Vivek Agarwal</name></author>
         <link href="http://vivek.im/notes/notes/hw-sw-interface-s1.html"/>
         <published>2013-04-30T00:00:00+05:30</published>
-        <updated>2013-04-30T21:10:03+05:30</updated>
+        <updated>2013-05-01T15:20:44+05:30</updated>
         <id>http://vivek.im/notes/notes/hw-sw-interface-s1.html</id>
         <category scheme="http://vivek.im/notes/tag/hwswint/" term="hwswint" label="hwswint" />
         <content type="html" xml:base="http://vivek.im/notes/" xml:lang="en">
@@ -42,7 +730,7 @@
 <div class="section" id="machine-words">
 <h2>Machine Words</h2>
 <p>Machine has a &quot;word size&quot;.</p>
-<p>Until recently, most machines used 32-bit (4-byte) words. It limited address to 4GB and it has become too small for memory intensive applications.</p>
+<p>Until recently, most machines used 32-bit (4-byte) words. It limited address to 4GB (2^32 bytes) and it has become too small for memory intensive applications.</p>
 <p>Now, most x86 systems use 64-bit (8-byte) words which has potential address space of 2<sup>64</sup> ~ 1.8 x 10<sup>19</sup> bytes (18EB - exabytes).</p>
 <p>For backward compatibility, many CPUs support different word sizes of 16-bit, 8-bit, 4-bit, 2-bit and 1-bit.</p>
 </div>
