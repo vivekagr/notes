@@ -3,14 +3,14 @@
     <title>Study Notes</title>
     <link href="http://vivek.im/notes/feed.xml" rel="self" />
     <link href="http://vivek.im/notes/" />
-    <updated>2013-04-30T18:41:04+05:30</updated>
+    <updated>2013-04-30T21:10:03+05:30</updated>
     <id>http://vivek.im/notes/</id>
     <entry>
         <title type="html"><![CDATA[S1 - Memory, Data and Addressing]]></title>
         <author><name>Vivek Agarwal</name></author>
         <link href="http://vivek.im/notes/notes/hw-sw-interface-s1.html"/>
         <published>2013-04-30T00:00:00+05:30</published>
-        <updated>2013-04-30T18:41:04+05:30</updated>
+        <updated>2013-04-30T21:10:03+05:30</updated>
         <id>http://vivek.im/notes/notes/hw-sw-interface-s1.html</id>
         <category scheme="http://vivek.im/notes/tag/hwswint/" term="hwswint" label="hwswint" />
         <content type="html" xml:base="http://vivek.im/notes/" xml:lang="en">
@@ -131,6 +131,103 @@
 <p><tt class="docutils literal">int x, y; x = y + 3;</tt> - Get value at y, add 3, put it in x</p>
 <p><tt class="docutils literal">int *x; int y; x = &amp;y + 3;</tt> - Get address of y, add (3 x 4 =) 12 to it, put it in x</p>
 <p><tt class="docutils literal">*x = y;</tt> - Here <tt class="docutils literal">*</tt> says to the compiler not to use <tt class="docutils literal">x</tt> itself as the variable rather get the value stored at x, interpret it as an address, put value of y at that address.</p>
+</div>
+<div class="section" id="arrays">
+<h2>Arrays</h2>
+<p>Arrays represent adjacent locations in memory that store same type of data objects. E.g. <tt class="docutils literal">int big_array[128];</tt> allocates 512 adjacent bytes in memory.</p>
+<div class="highlight"><pre><span class="cm">/* Lets assume that array starts at 0x00ff0000 */</span>
+<span class="kt">int</span> <span class="o">*</span><span class="n">array_ptr</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">big_array</span><span class="p">[</span><span class="mi">128</span><span class="p">];</span>
+<span class="n">array_ptr</span> <span class="o">=</span> <span class="n">big_array</span><span class="p">;</span> <span class="cm">/* 0x00ff0000 */</span>
+<span class="n">array_ptr</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">big_array</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span> <span class="cm">/* 0x00ff0000 */</span>
+<span class="n">array_ptr</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">big_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">3</span><span class="p">;</span> <span class="cm">/* 0x00ff000c (adds 3 * size of int) */</span>
+<span class="n">array_ptr</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">big_array</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span> <span class="cm">/* 0x00ff000c (adds 3 * size of int) */</span>
+<span class="n">array_ptr</span> <span class="o">=</span> <span class="n">big_array</span> <span class="o">+</span> <span class="mi">3</span><span class="p">;</span> <span class="cm">/* 0x00ff000c (adds 3 * size of int) */</span>
+<span class="o">*</span><span class="n">array_ptr</span> <span class="o">=</span> <span class="o">*</span><span class="n">array_ptr</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="cm">/* 0x00ff000c (but big_array[3] is incremented) */</span>
+</pre></div>
+<p>The last one is a bit complicated. Lets first see RHS. <tt class="docutils literal">*array_ptr</tt> gets the value pointed to by the pointer <tt class="docutils literal">array_ptr</tt> which is <tt class="docutils literal">big_array[3]</tt> as seen in second-last line. Now in LHS, <tt class="docutils literal">*array_ptr</tt> says to go to the location pointed to by <tt class="docutils literal">array_ptr</tt> which is the address of <tt class="docutils literal">big_array[3]</tt>. So, in effect, it is equivalent to psuedo-code <tt class="docutils literal">big_array[3] = big_array[3] + 1</tt>.</p>
+<p><tt class="docutils literal">array_ptr = &amp;big_array[130];</tt> - The array was only 128 element long but we are asking for index 130. But C doesn't give a fuck. It applies the same arithmetic calculation (adding 130 * size of int) and gives back address <tt class="docutils literal">0x00ff0208</tt>. Beware of this!</p>
+<p>In general, <tt class="docutils literal">&amp;big_array[i]</tt> is same as <tt class="docutils literal">(big_array + i)</tt>, which implicitly computes <tt class="docutils literal">&amp;big_array[0] + i * <span class="pre">sizeof(big_array[0]);</span></tt></p>
+</div>
+<div class="section" id="representing-strings">
+<h2>Representing strings</h2>
+<p>A C-style string is represented by an array of bytes. Elements are one-byte ASCII codes for each character. A 0 byte marks the end of the array.</p>
+<p><tt class="docutils literal">char S[4] = &quot;lola&quot;;</tt></p>
+<div class="highlight"><pre><span class="kt">void</span> <span class="nf">show_bytes</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">start</span><span class="p">,</span> <span class="kt">int</span> <span class="n">len</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">len</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%p</span><span class="se">\t</span><span class="s">0x%.2x</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">start</span><span class="o">+</span><span class="n">i</span><span class="p">,</span> <span class="o">*</span><span class="p">(</span><span class="n">start</span><span class="o">+</span><span class="n">i</span><span class="p">));</span>
+    <span class="n">print</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">show_int</span> <span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">show_bytes</span><span class="p">((</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">x</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+<p>First argument for <tt class="docutils literal">show_bytes</tt> function is the address of the starting location in memory. It is a pointer pointing to the character (which are of size one byte). Second argument is the length of bytes we want to print. <tt class="docutils literal">%p</tt> is for printing pointer and <tt class="docutils literal">%x</tt> is for printing a value as hex and <tt class="docutils literal">%.2x</tt> is for printing the value as two digit hex.</p>
+<p>In <tt class="docutils literal">show_int</tt> function, while passing the first parameter, <tt class="docutils literal">&amp;x</tt> is address of an integer, but by <tt class="docutils literal">(char *) &amp;x</tt>, we are casting it as an address of character.</p>
+</div>
+<div class="section" id="boolean-algebra">
+<h2>Boolean Algebra</h2>
+<p>Encode &quot;True&quot; as 1 and &quot;False&quot; as 0.</p>
+<ul class="simple">
+<li>AND: A&amp;B = 1 when both A is 1 and B is 1</li>
+<li>OR: A|B = 1 when either A is 1 or B is 1 or both</li>
+<li>XOR: A^B = 1 when either A is 1 or B is 1, but not both</li>
+<li>NOT: ~A = 1 when A is 0 and vice-versa</li>
+</ul>
+<p>DeMorgan's Law: <tt class="docutils literal">~(A|B) = ~A &amp; ~B</tt></p>
+</div>
+<div class="section" id="bitwise-operations">
+<h2>Bitwise Operations</h2>
+<p>Bitwise operators <tt class="docutils literal">&amp;</tt>, <tt class="docutils literal">|</tt>, <tt class="docutils literal">^</tt>, <tt class="docutils literal">~</tt> are available in C.
+They can be applied to any &quot;integral&quot; data types (long, int, short, char). Operations are applied bitwise.</p>
+<p>Examples:</p>
+<div class="highlight"><pre><span class="kt">char</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">;</span>
+<span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span><span class="p">)</span><span class="mh">0x41</span><span class="p">;</span> <span class="cm">/* 0x41 -&gt; 01000001 */</span>
+<span class="n">b</span> <span class="o">=</span> <span class="o">~</span><span class="n">a</span><span class="p">;</span>         <span class="cm">/* 10111110 -&gt; 0xBE */</span>
+<span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span><span class="p">)</span><span class="mi">0</span><span class="p">;</span>    <span class="cm">/* 0x00 -&gt; 00000000 */</span>
+<span class="n">b</span> <span class="o">=</span> <span class="o">~</span><span class="n">a</span><span class="p">;</span>         <span class="cm">/* 11111111 -&gt; 0xFF */</span>
+<span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span><span class="p">)</span><span class="mh">0x69</span><span class="p">;</span> <span class="cm">/* 0x69 -&gt; 01101001 */</span>
+<span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span><span class="p">)</span><span class="mh">0x55</span><span class="p">;</span> <span class="cm">/* 0x55 -&gt; 01010101 */</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">a</span> <span class="o">&amp;</span> <span class="n">b</span><span class="p">;</span>      <span class="cm">/* 01000001 -&gt; 0x41 */</span>
+</pre></div>
+</div>
+<div class="section" id="logic-operations">
+<h2>Logic Operations</h2>
+<p>Logical operators in C: <tt class="docutils literal">&amp;&amp;</tt>, <tt class="docutils literal">||</tt> and <tt class="docutils literal">!</tt>. <tt class="docutils literal">0</tt> is viewed as false and any non-zero value is treated as true. Early termination occurs where possible.</p>
+<p>Examples:</p>
+<ul class="simple">
+<li><tt class="docutils literal">!0x41</tt>         --&gt; <tt class="docutils literal">0x00</tt></li>
+<li><tt class="docutils literal">!0x00</tt>         --&gt; <tt class="docutils literal">0x01</tt></li>
+<li><tt class="docutils literal">0x69 &amp;&amp; 0x55</tt>  --&gt; <tt class="docutils literal">0x01</tt></li>
+<li><tt class="docutils literal">0x00 &amp;&amp; 0x55</tt>  --&gt; <tt class="docutils literal">0x00</tt></li>
+<li><tt class="docutils literal">0x69 || 0x55</tt>  --&gt; <tt class="docutils literal">0x01</tt></li>
+<li><tt class="docutils literal">p &amp;&amp; *p++</tt> (avoids null pointer access <tt class="docutils literal">0x00000000</tt>)</li>
+</ul>
+<p>In the last one, if p is a null pointer (false), then the <cite>and</cite> operation will short-circuit and <tt class="docutils literal">*p++</tt> won't be executed. It is short for <tt class="docutils literal">if (p) { <span class="pre">*p++;</span> }</tt>.</p>
+</div>
+<div class="section" id="representing-manipulating-sets">
+<h2>Representing &amp; Manipulating Sets</h2>
+<p>Bit vectors can be used to represent sets.</p>
+<p>Width w bit vector represents of {0,...,w-1}</p>
+<p>a<sub>j</sub>= 1 if j in A - each bit in the vector represents the absence (0) or presence (1) of an element in the set.</p>
+<blockquote>
+<p>01101001</p>
+<p>76543210</p>
+</blockquote>
+<p>The set here is {0, 3, 5, 6}.</p>
+<blockquote>
+<p>01010101</p>
+<p>76543210</p>
+</blockquote>
+<p>And the set here is {0, 2, 4, 6}.</p>
+<p>Operations:</p>
+<ul class="simple">
+<li><tt class="docutils literal">&amp;</tt> Intersections        --&gt; 01000001 {0, 6}</li>
+<li><tt class="docutils literal">|</tt> Union                --&gt; 01111101 {0, 2, 3, 4, 5, 6}</li>
+<li><tt class="docutils literal">^</tt> Symmetric difference --&gt; 00111100 {2, 3, 4, 5}</li>
+<li><tt class="docutils literal">~</tt> Complement           --&gt; 10101010 {1, 3, 5, 7}</li>
+</ul>
 </div>
 ]]>
         </content>

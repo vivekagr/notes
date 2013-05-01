@@ -148,7 +148,130 @@ RHS must evaluate to a value (could be an address).
 ``*x = y;`` - Here ``*`` says to the compiler not to use ``x`` itself as the variable rather get the value stored at x, interpret it as an address, put value of y at that address.
 
 
+Arrays
+------
 
+Arrays represent adjacent locations in memory that store same type of data objects. E.g. ``int big_array[128];`` allocates 512 adjacent bytes in memory.
+
+.. code-block:: c
+
+    /* Lets assume that array starts at 0x00ff0000 */
+    int *array_ptr;
+    int big_array[128];
+    array_ptr = big_array; /* 0x00ff0000 */
+    array_ptr = &big_array[0]; /* 0x00ff0000 */
+    array_ptr = &big_array[0] + 3; /* 0x00ff000c (adds 3 * size of int) */
+    array_ptr = &big_array[3]; /* 0x00ff000c (adds 3 * size of int) */
+    array_ptr = big_array + 3; /* 0x00ff000c (adds 3 * size of int) */
+    *array_ptr = *array_ptr + 1; /* 0x00ff000c (but big_array[3] is incremented) */
+
+The last one is a bit complicated. Lets first see RHS. ``*array_ptr`` gets the value pointed to by the pointer ``array_ptr`` which is ``big_array[3]`` as seen in second-last line. Now in LHS, ``*array_ptr`` says to go to the location pointed to by ``array_ptr`` which is the address of ``big_array[3]``. So, in effect, it is equivalent to psuedo-code ``big_array[3] = big_array[3] + 1``.
+
+``array_ptr = &big_array[130];`` - The array was only 128 element long but we are asking for index 130. But C doesn't give a fuck. It applies the same arithmetic calculation (adding 130 * size of int) and gives back address ``0x00ff0208``. Beware of this!
+
+In general, ``&big_array[i]`` is same as ``(big_array + i)``, which implicitly computes ``&big_array[0] + i * sizeof(big_array[0]);``
+
+Representing strings
+--------------------
+
+A C-style string is represented by an array of bytes. Elements are one-byte ASCII codes for each character. A 0 byte marks the end of the array.
+
+``char S[4] = "lola";``
+
+.. code-block:: c
+
+    void show_bytes(char *start, int len) {
+        int i;
+        for (i = 0; i < len; i++)
+            printf("%p\t0x%.2x\n", start+i, *(start+i));
+        print("\n");
+    }
+    void show_int (int x) {
+        show_bytes((char *) &x, sizeof(int));
+    }
+
+First argument for ``show_bytes`` function is the address of the starting location in memory. It is a pointer pointing to the character (which are of size one byte). Second argument is the length of bytes we want to print. ``%p`` is for printing pointer and ``%x`` is for printing a value as hex and ``%.2x`` is for printing the value as two digit hex.
+
+In ``show_int`` function, while passing the first parameter, ``&x`` is address of an integer, but by ``(char *) &x``, we are casting it as an address of character.
+
+
+Boolean Algebra
+---------------
+
+Encode "True" as 1 and "False" as 0.
+
+- AND: A&B = 1 when both A is 1 and B is 1
+- OR: A|B = 1 when either A is 1 or B is 1 or both
+- XOR: A^B = 1 when either A is 1 or B is 1, but not both
+- NOT: ~A = 1 when A is 0 and vice-versa
+
+DeMorgan's Law: ``~(A|B) = ~A & ~B``
+
+
+Bitwise Operations
+------------------
+
+Bitwise operators ``&``, ``|``, ``^``, ``~`` are available in C.
+They can be applied to any "integral" data types (long, int, short, char). Operations are applied bitwise.
+
+Examples:
+
+.. code-block:: c
+
+    char a, b, c;
+    a = (char)0x41; /* 0x41 -> 01000001 */
+    b = ~a;         /* 10111110 -> 0xBE */
+    a = (char)0;    /* 0x00 -> 00000000 */
+    b = ~a;         /* 11111111 -> 0xFF */
+    a = (char)0x69; /* 0x69 -> 01101001 */
+    b = (char)0x55; /* 0x55 -> 01010101 */
+    c = a & b;      /* 01000001 -> 0x41 */
+
+
+Logic Operations
+----------------
+
+Logical operators in C: ``&&``, ``||`` and ``!``. ``0`` is viewed as false and any non-zero value is treated as true. Early termination occurs where possible.
+
+Examples:
+
+- ``!0x41``         --> ``0x00``
+- ``!0x00``         --> ``0x01``
+- ``0x69 && 0x55``  --> ``0x01``
+- ``0x00 && 0x55``  --> ``0x00``
+- ``0x69 || 0x55``  --> ``0x01``
+- ``p && *p++`` (avoids null pointer access ``0x00000000``)
+
+In the last one, if p is a null pointer (false), then the `and` operation will short-circuit and ``*p++`` won't be executed. It is short for ``if (p) { *p++; }``.
+
+
+Representing & Manipulating Sets
+--------------------------------
+
+Bit vectors can be used to represent sets.
+
+Width w bit vector represents of {0,...,w-1}
+
+a\ :sub:`j`\ = 1 if j in A - each bit in the vector represents the absence (0) or presence (1) of an element in the set.
+
+    01101001
+
+    76543210
+
+The set here is {0, 3, 5, 6}.
+
+    01010101
+
+    76543210
+
+And the set here is {0, 2, 4, 6}.
+
+Operations:
+
+- ``&`` Intersections        --> 01000001 {0, 6}
+- ``|`` Union                --> 01111101 {0, 2, 3, 4, 5, 6}
+- ``^`` Symmetric difference --> 00111100 {2, 3, 4, 5}
+- ``~`` Complement           --> 10101010 {1, 3, 5, 7}
 
 
 
