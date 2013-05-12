@@ -3,9 +3,399 @@
     <title>Study Notes</title>
     <link href="http://vivek.im/notes/feed.xml" rel="self" />
     <link href="http://vivek.im/notes/" />
-    <updated>2013-05-13T04:55:19+05:30</updated>
+    <updated>2013-05-13T04:55:39+05:30</updated>
     <id>http://vivek.im/notes/</id>
     <entry>
+        <title type="html"><![CDATA[M101 - MongoDB for Developers]]></title>
+        <author><name>Vivek Agarwal</name></author>
+        <link href="http://vivek.im/notes/notes/mongodb.html"/>
+        <published>2013-05-09T00:00:00+05:30</published>
+        <updated>2013-05-13T04:55:39+05:30</updated>
+        <id>http://vivek.im/notes/notes/mongodb.html</id>
+        <category scheme="http://vivek.im/notes/tag/mongodb/" term="mongodb" label="mongodb" />
+        <content type="html" xml:base="http://vivek.im/notes/" xml:lang="en">
+            <![CDATA[ <p>In MongoDB, there can be multiple databases. You can switch to a different database using <tt class="docutils literal">use &lt;db_name&gt;</tt> command in mongo shell. If the database doesn't exits, it will be automatically created and selected.</p>
+<p>A database can have multiple collections. And each collections can have multiple <cite>documents</cite> which are basically BSON (like JSON) objects (dicts or key-value associations). BSON is a super-script of JSON syntax. Apart from JSON elements, BSON has few other stuff like binary data storage, UTC datetime, unique <tt class="docutils literal">ObjectId</tt>, regex, etc.</p>
+<p>In Mongo, different documents can have different schema, so it is <strong>schemaless</strong>.</p>
+<p>All the documents in a collection (coll_1) can be retrieved by - <tt class="docutils literal"><span class="pre">db.coll_1.find();</span></tt>.</p>
+<p>A document can be stored in a collection (coll_1) by - <tt class="docutils literal"><span class="pre">db.coll_1.save({name:&quot;Lola&quot;,</span> favs: [&quot;harry potter&quot;, &quot;kill <span class="pre">bill&quot;]});</span></tt>.</p>
+<p>One document can be fetched using <tt class="docutils literal">findOne()</tt> method. E.g. <tt class="docutils literal">db.coll_1.findOne()</tt>.</p>
+<p>Output can be prettified using <tt class="docutils literal">pretty()</tt> method on any query. E.g. <tt class="docutils literal"><span class="pre">db.coll_1.find().pretty()</span></tt>.</p>
+<p>When a document is inserted, MongoDB required that every document has an <tt class="docutils literal">_id</tt> field in it. It is a primary key field therefore it is unique and immutable. It is an ObjectId instance. If <tt class="docutils literal">_id</tt> isn't present while insertion, an ObjectId instance will be created and inserted with it. Any other value such as number, string, etc can be used for <tt class="docutils literal">_id</tt> field as well but it has to be unique. If an object with a suplicate <tt class="docutils literal">_id</tt> field is inserted, it overwrites the original document.</p>
+<div class="section" id="crud-operations">
+<h2>CRUD Operations</h2>
+<p>CRUD - Create, Read, Update and Delete.</p>
+<p>In MongoDB terms =&gt; Insert, Find, Update and Remove.</p>
+<p>MongoDB doesn't has its own language analogous to SQL. MongoDB CRUD operations exist as method/functions in programming language APIs.</p>
+<p>Mongo shell is an interactive javascript interpreter.</p>
+<p>When a statement such as <tt class="docutils literal">db.coll_1.findOne()</tt> is run, here <tt class="docutils literal">db</tt> is a handle for the currently selected database.</p>
+<p><strong>Inserting Docs</strong></p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.insert({name:</span> &quot;Booker DeWitt&quot;, mission: &quot;Save <span class="pre">Elizabeth&quot;});</span></tt></p>
+<p><strong>findOne operation</strong></p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.findOne();</span></tt> gives back a random document from the collection.</p>
+<p>We can also give arguments to findOne. E.g. <tt class="docutils literal"><span class="pre">db.coll_1.findOne({name:</span> &quot;Lola&quot;, <span class="pre">subject:&quot;CS&quot;});</span></tt> will find one document with field <tt class="docutils literal">name: &quot;Lola&quot;</tt> and <tt class="docutils literal"><span class="pre">subject:&quot;CS&quot;</span></tt> in it and nothing if no result is found.</p>
+<p>A second argument can also be given, which specifies which fields we want back in the result. E.g. <tt class="docutils literal"><span class="pre">db.coll_1.findOne({name:</span> <span class="pre">&quot;Lola&quot;},</span> {name: true, profession: true, _id: <span class="pre">false});</span></tt>.</p>
+<p>Above query will return a document with <tt class="docutils literal">name: &quot;Jones&quot;</tt> field in it and the document will only contain fields <tt class="docutils literal">name</tt> and <tt class="docutils literal">profession</tt> in it. By default, <tt class="docutils literal">_id</tt> is set to true, but we can hide <tt class="docutils literal">_id</tt> by setting it to false.</p>
+<p><strong>find Operation</strong></p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.find();</span></tt> returns all the documents present in the <tt class="docutils literal">coll_1</tt> collection. In mongo shell, 20 documents are returned in batches at a time.</p>
+<p><tt class="docutils literal">find</tt> method can also 2 arguments just like <tt class="docutils literal">findOne</tt>.</p>
+<p>If you want to find a document in a collection and you are sure that only one document for the query exists, then use <tt class="docutils literal">findOne</tt> instead, since it will stop searching for database after the first result is found. Whereas, <tt class="docutils literal">find</tt> searches the entire database to find all the possible results.</p>
+<p><strong>$gt and $lt operations</strong></p>
+<p><tt class="docutils literal">db.coll_1.find({ score: { $lt: 100 } });</tt> returns all the documents with <tt class="docutils literal">score</tt> field values less than 100.</p>
+<p><tt class="docutils literal">db.coll_1.find({ score: { $gt: 90 } });</tt> returns all the documents with <tt class="docutils literal">score</tt> field values greater than 90.</p>
+<p><tt class="docutils literal">db.coll_1.find({ score: { $gte: 90, $lt: 100 } });</tt> returns all the documents with <tt class="docutils literal">score</tt> field values greater than or equal to 90 and less than 100.</p>
+<p><tt class="docutils literal">db.coll_1.find({ score: { $lte: 100 }, type: &quot;essay&quot; });</tt> returns all the documents with <tt class="docutils literal">score</tt> field values less than or equal to 100 and <tt class="docutils literal">type</tt> field value <tt class="docutils literal">essay</tt>.</p>
+<ul class="simple">
+<li><tt class="docutils literal">$gt</tt> - greater than</li>
+<li><tt class="docutils literal">$lt</tt> - less than</li>
+<li><tt class="docutils literal">$gte</tt> - greater than or equal to</li>
+<li><tt class="docutils literal">$lte</tt> - less than or equal to</li>
+</ul>
+<p>These operations also work on strings (uses utf8 encoding values for comparision).</p>
+<p><strong>Using regexes, $exists, $type operations</strong></p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.find({profession:</span> {$exists: true} });</tt> will return all documents in which <tt class="docutils literal">profession</tt> field is present.</p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.find({name:</span> {$type: 2} });</tt> will return all documents in which <tt class="docutils literal">name</tt> field only has string value.</p>
+<p>Numeric encoding for various data types as specified in BSON spec are used for querying for specific data types.</p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.find({name:</span> { $regex: &quot;^Ta&quot; });</tt> qill return all documents in which <tt class="docutils literal">name</tt> field starts with &quot;Ta&quot; string. Any regex pattern can be used here.</p>
+<p><strong>$or, $and operation</strong></p>
+<p><tt class="docutils literal">db.coll_1.find({ $or: [ {name: {$regex: <span class="pre">&quot;e$&quot;}},</span> {age: {$exists: true}} ] });</tt> will return all documents where <tt class="docutils literal">name</tt> field ends with string &quot;e&quot; or <tt class="docutils literal">age</tt> field is present.</p>
+<p><tt class="docutils literal">$or</tt> is a prefix operator. It takes separate queries in an array and returns documents which match any of the separate queries. In effect, it performs union of queries.</p>
+<p><tt class="docutils literal">$and</tt> works very similar to <tt class="docutils literal">$or</tt> operator.</p>
+<p><tt class="docutils literal">db.coll_1.find({ $and: [ {name: {$gt: <span class="pre">&quot;C&quot;}},</span> {profession: &quot;Engineer&quot;} ] });</tt> will return all the documents where name is greater than (starts with) letter C and <tt class="docutils literal">profession</tt> field is &quot;Engineer&quot;.</p>
+<p>But <tt class="docutils literal">$and</tt> isn't frequently used since the above operation can be writter in a simpler manner such as <tt class="docutils literal"><span class="pre">db.coll_1.find({name:</span> {$gt: <span class="pre">&quot;C&quot;},</span> profession: <span class="pre">&quot;Engineer&quot;});</span></tt></p>
+<p><strong>Querying inside arrays with $all and $in operators</strong></p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.find({favorite:</span> <span class="pre">&quot;beer&quot;});</span></tt> will normally find all the documents in which field <tt class="docutils literal">favorite: &quot;beer&quot;</tt> exists. But if the <tt class="docutils literal">favorite</tt> field is an array, then it will look inside array if &quot;beer&quot; exists.</p>
+<p>If we want to look for multiple values in an array, <tt class="docutils literal">$all</tt> operator can be used.</p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.find({favorite:</span> {$all: [&quot;beer&quot;, &quot;cheese&quot;] <span class="pre">}});</span></tt> will find documents in which <tt class="docutils literal">favorite</tt> field is an array and it contains both &quot;beer&quot; and &quot;cheese&quot; elements. It can contain other elements as well.</p>
+<p>If we want to look for either of the multiple values in an array, <tt class="docutils literal">$in</tt> operator can be used.</p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.find({favorite:</span> {$in: [&quot;beer&quot;, &quot;cheese&quot;] <span class="pre">}});</span></tt> will find documents in which <tt class="docutils literal">favorite</tt> field is an array and it contains either &quot;beer&quot; or &quot;cheese&quot; elements.</p>
+<p><strong>Querying for nested documents with dot notation</strong></p>
+<p>Suppose we have a document <tt class="docutils literal">{name: &quot;Lola&quot;, email: {work: &quot;work&#64;lola.com&quot;, personal: <span class="pre">&quot;me&#64;lola.com&quot;}}</span></tt> and we want to find documents with work email address to be &quot;<a class="reference external" href="mailto:work&#64;lola.com">work&#64;lola.com</a>&quot;, following query with dot notation can be used.</p>
+<p><tt class="docutils literal">db.coll_1.find({ email.work: <span class="pre">&quot;work&#64;lola.com&quot;});</span></tt></p>
+<p><strong>Cursors</strong></p>
+<p>When a query is executed, a cursor is contructed and returned. Interactive shell is configured to print documents by iterating over the cursor. But a cursor can be hold onto with <tt class="docutils literal">cur = <span class="pre">db.people.find();</span> null;</tt>. <tt class="docutils literal">null;</tt> is tacked on to prevent printing the elements. <tt class="docutils literal">cur.hasNext()</tt> returns true if there is document present next. <tt class="docutils literal">cur.next()</tt> returns the next document. <tt class="docutils literal">find()</tt> method can be implemented as <tt class="docutils literal">while <span class="pre">(cur.hasNext())</span> <span class="pre">printjson(cur.next());</span></tt>.</p>
+<p>A <strong>limit</strong> can be imposed on a cursor by appending <tt class="docutils literal">cursor()</tt> method over it. For example, on above cursor <tt class="docutils literal">cur.limit(5); null;</tt> or on a query <tt class="docutils literal"><span class="pre">db.coll_1.find().limit(5);</span></tt>.</p>
+<p>We can also get <strong>sorted</strong> results by appending <tt class="docutils literal">sort()</tt> method over the query. For e.g., on above cursor <tt class="docutils literal"><span class="pre">cur.sort({name:</span> <span class="pre">-1});</span> null;</tt> or on a query <tt class="docutils literal"><span class="pre">db.coll_1.find().sort({name:</span> <span class="pre">-1});</span></tt>. This will return documents reversely sorted by the value of <tt class="docutils literal">name</tt> field.</p>
+<p>If we want to <strong>skip</strong> certain number of elements, <tt class="docutils literal">skip()</tt> method can be used. For e.g. on above cursor <tt class="docutils literal">cur.skip(5); null;</tt> or on a query <tt class="docutils literal"><span class="pre">db.coll_1.find().skip(5);</span></tt>. This will skip first 5 documents and then return the rest.</p>
+<p>Sorting, skipping and limiting can be done at the same time e.g., <tt class="docutils literal"><span class="pre">db.coll_1.find().sort({score:</span> <span class="pre">-1}).skip(5).limit(10);</span></tt>.</p>
+<p>All these three operation occur on the server-side in MongoDB.</p>
+<p>If we want to count the number of documents we can get as a result for a query, simple append the method <tt class="docutils literal">count()</tt> at the end of the query.</p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.find({first_name:</span> <span class="pre">&quot;Joe&quot;}).count();</span></tt></p>
+<p><strong>Wholesale updating of a document</strong></p>
+<p><tt class="docutils literal">update</tt> method in MongoDB can actually do 4 different things. It takes atleast 2 arguments.</p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.update({name:</span> <span class="pre">&quot;Jon&quot;},</span> {name: &quot;Lola&quot;, job: <span class="pre">&quot;Engineer&quot;});</span></tt> will find a document with key <tt class="docutils literal">name: &quot;Jon&quot;</tt>, delete everything in it except <tt class="docutils literal">id</tt> field and then insert fields <tt class="docutils literal">name: &quot;Lola&quot;</tt> and <tt class="docutils literal">job: &quot;Engineer&quot;</tt> in it. This is a dangerous way of updating records since it deletes previous data.</p>
+<p><strong>Using $set and $inc command</strong></p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.update({name:</span> <span class="pre">&quot;Jon&quot;},</span> {$set: {job: <span class="pre">&quot;Engineer&quot;}});</span></tt> will find a document with key <tt class="docutils literal">name: &quot;Jon&quot;</tt> and update just the <tt class="docutils literal">job</tt> field (or create if it doesn't exists) leaving rest of the data intact.</p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.update({name:</span> <span class="pre">&quot;Jon&quot;},</span> {$inc: {age: <span class="pre">1}});</span></tt> will find a document with key <tt class="docutils literal">name: &quot;Jon&quot;</tt> and increment just the <tt class="docutils literal">age</tt> field by 1 (or create if it doesn't exists) leaving rest of the data intact.</p>
+<p>These are much safer way to update any field in a document.</p>
+<p><strong>Using $unset command</strong></p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.update({name:</span> <span class="pre">&quot;Jon&quot;},</span> {$unset: {job: <span class="pre">1}});</span></tt> will find a document with key <tt class="docutils literal">name: &quot;Jon&quot;</tt> and remove just the <tt class="docutils literal">job</tt> field, leaving rest of the data intact.</p>
+<p><strong>Manipulating arrays inside documents</strong></p>
+<p>Suppose we have an object <tt class="docutils literal">{_id: 0, a: [1, 2, 3, 4]}</tt>. Following array manipulations can be done.</p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.update({_id:0},</span> {$set: {&quot;a.2&quot;: <span class="pre">5}});</span></tt> --&gt; <tt class="docutils literal">{_id: 0, a: [1, 2, 5, 4]}</tt>. Changes <tt class="docutils literal">a[2]</tt> element to 5.</p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.update({_id:0},</span> {$push: {&quot;a&quot;: <span class="pre">5}});</span></tt> --&gt; <tt class="docutils literal">{_id: 0, a: [1, 2, 5, 4, 6]}</tt>. Pushes value to the end of the array.</p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.update({_id:0},</span> {$pop: {&quot;a&quot;: <span class="pre">1}});</span></tt> --&gt; <tt class="docutils literal">{_id: 0, a: [1, 2, 5, 4]}</tt>. Pops value out from the end of the array.</p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.update({_id:0},</span> {$pop: {&quot;a&quot;: <span class="pre">-1}});</span></tt> --&gt; <tt class="docutils literal">{_id: 0, a: [2, 5, 4]}</tt>. Pops value from the beginning of the array.</p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.update({_id:0},</span> {$pushAll: {&quot;a&quot;: [7, 8, <span class="pre">9]}});</span></tt> --&gt; <tt class="docutils literal">{_id: 0, a: [2, 5, 4, 7, 8, 9]}</tt>. Pushes all the values to the end of the array.</p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.update({_id:0},</span> {$pull: {&quot;a&quot;: <span class="pre">5}});</span></tt> --&gt; <tt class="docutils literal">{_id: 0, a: [2, 4, 7, 8, 9]}</tt>. Deletes the specified value from the array, no matter the position.</p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.update({_id:0},</span> {$pullAll: {&quot;a&quot;: [2, 4, <span class="pre">8]}});</span></tt> --&gt; <tt class="docutils literal">{_id: 0, a: [7, 9]}</tt>. Deletes all the specified values from the array, no matter the position.</p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.update({_id:0},</span> {$addToSet: {&quot;a&quot;: <span class="pre">5}});</span></tt> --&gt; <tt class="docutils literal">{_id: 0, a: [7, 9, 5]}</tt>. <tt class="docutils literal">addToSet</tt> treats array as a set and adds the value only if it is not already present.</p>
+<p><strong>Upserts</strong></p>
+<p>Suppose we want to update a document if it exists or if it doesn't exists, then create one with provided information.</p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.update({&quot;name&quot;:</span> <span class="pre">&quot;Elizabeth&quot;},</span> {$set: {destination: <span class="pre">&quot;Paris&quot;}});</span></tt></p>
+<p>The query above will do nothing if there is no document with name field set to &quot;Elizabeth&quot;. However, <tt class="docutils literal">upsert</tt> flag can be set to true if we want a new collection to be created if it doesn't already exists.</p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.update({&quot;name&quot;:</span> <span class="pre">&quot;Elizabeth&quot;},</span> {$set: {destination: <span class="pre">&quot;Paris&quot;}},</span> {upsert: <span class="pre">true});</span></tt></p>
+<p>The above query will create a new document <tt class="docutils literal">{name: &quot;Elizabeth&quot;, destination: &quot;Paris&quot;}</tt> if it didn't exist.</p>
+<p><strong>Multi-update</strong></p>
+<p>By default, all the update operation affects only one document. We can however set <tt class="docutils literal">multi</tt> flag to true if we want multiple documents to be updated.</p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.update({job:</span> <span class="pre">&quot;Doctor&quot;},</span> {$set: {title: <span class="pre">&quot;Dr&quot;}},</span> {multi: <span class="pre">true});</span></tt> will find <strong>all</strong> the documents having field <tt class="docutils literal">job: &quot;Doctor&quot;</tt> and set field <tt class="docutils literal">title: &quot;Dr&quot;</tt> in it.</p>
+<p><strong>Removing data</strong></p>
+<p><tt class="docutils literal"><span class="pre">db.people.remove({name:</span> <span class="pre">&quot;Comstock&quot;});</span></tt> removed all documents which had field <tt class="docutils literal">name: &quot;Comstock&quot;</tt> in it.</p>
+<p>All documents in a collection can be removed by <tt class="docutils literal"><span class="pre">db.coll_1.remove();</span></tt> or a much faster way <tt class="docutils literal"><span class="pre">db.coll_1.drop();</span></tt>.</p>
+<p><strong>getLastError</strong></p>
+<p><tt class="docutils literal">getLastError</tt> is a very helpful command which can give information about the last query whether it failed or succeeded with a document containing the error message and other details such as whether existing documents were affected during an <tt class="docutils literal">update</tt> or not, how many documents were affected, etc.</p>
+<p><tt class="docutils literal"><span class="pre">db.runCommand({getLastError:</span> <span class="pre">1});</span></tt></p>
+</div>
+<div class="section" id="indexes">
+<h2>Indexes</h2>
+<p>Indexed can be used to speed up the lookup operation in a collection. For example, if we have a collection with million of user's data and we use <tt class="docutils literal">username</tt> as primary key, an index on the collection can be generated by <tt class="docutils literal"><span class="pre">db.coll_1.ensureIndex({username:</span> <span class="pre">1});</span></tt>. The value indicates ascending order sorting while index creation.</p>
+<p>Multiple keys can also be used to generate compound index. For example <tt class="docutils literal"><span class="pre">db.coll_1.ensureIndex({a:1,</span> b:1, <span class="pre">c:1});</span></tt>. Following are different combinations of queries and whether index is used for them -</p>
+<ul class="simple">
+<li><tt class="docutils literal">a, b</tt>, <tt class="docutils literal">a, b, c</tt> - Yes</li>
+<li><tt class="docutils literal">a</tt> - Yes</li>
+<li><tt class="docutils literal">b</tt>, <tt class="docutils literal">c</tt> - No</li>
+<li><tt class="docutils literal">c, b</tt>, <tt class="docutils literal">b, a</tt> - No</li>
+<li><tt class="docutils literal">a, c</tt> - Yes (only a part index is used)</li>
+</ul>
+<p>Don't generate index for every possible type of query you might make. Instead just create index for most common type of queries. Indexes are not costless, as they take up more memory space and have to be additionally updates everytime something is changed.</p>
+<p>All the present indexes in a database can be looked up using <tt class="docutils literal">db.system.indexes.find()</tt>. All the present indexes in a collection can be looked up with <tt class="docutils literal">db.coll_1.getIndexes()</tt>.</p>
+<p>Index can be dropped with <tt class="docutils literal"><span class="pre">db.dropIndex({username:</span> <span class="pre">1});</span></tt>.</p>
+<p><strong>Multikey Index</strong></p>
+<p>If we want to make an index for a key which contains array values, then MongoDB makes indexe for each of the value in the array which is called Multikey index. However, a multikey compound index with two or more parallel arrays cannot be created.</p>
+<p><strong>Unique Index</strong></p>
+<p>The key in an index can be forced to be unique so that none of the values for the index keys are repeated. It can be done by providing a second argument while creating the index. For example, <tt class="docutils literal">_id</tt> key index is a unique one.</p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.ensureIndex({username:1},</span> {unique: <span class="pre">true});</span></tt></p>
+<p>If we want to create a unique index on a collection but it already has some duplicates, then we can remove the duplicates while creating index. Remember that this is dangerous since you can't control which documents are deleted.</p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.ensureIndex({username:</span> 1}, {unique: true, dropDups: <span class="pre">true});</span></tt></p>
+<p><strong>Sparse Index</strong></p>
+<p>If we want to create a unique index with a key on a collection but not all the documents in the collection have that key then it would create a problem.</p>
+<p>For e.g., <tt class="docutils literal">{a: 1, b:2, c: 3}, {a: 4, b: 5}, {a: 6, b: 7}</tt> are the three documents in a collection. If we want to create a unique index for key <tt class="docutils literal">c</tt> but last two documents don't have it and MongoDB by default assume them to have <tt class="docutils literal">c: null</tt> value. Now, since both of them have <tt class="docutils literal">c: null</tt> value, it would be considered as duplicate and thus, unique index can't be created on them.</p>
+<p>Sparse Index can solve the problem. <tt class="docutils literal"><span class="pre">db.coll_1.ensureIndex({username:</span> 1}, {unique: true, sparse: <span class="pre">true});</span></tt></p>
+<p>This index will include only the documents which have the <tt class="docutils literal">username</tt> key set to some value.</p>
+<p>However, Sparse Index can create some weird artifact with some queries, especially with sort. For e.g. <tt class="docutils literal"><span class="pre">db.coll_1.find().sort({username:</span> <span class="pre">1});</span></tt> should include all the documents in the collection but the actual result will include only the ones in the index. Queries in MongoDB always try to use an index when present, so here the sort part of the query uses the sparse index which results in incorrect output.</p>
+<p><strong>Background Index Creation</strong></p>
+<p>By default, indexes are created in foreground which is faster but it blocks all the other writers. But if it is essential to prevent the blockage of the other writers such as in production environment, then background creation can be preffered which doesn't blocks other writers but it a bit slower. Background creation can be done via providing <tt class="docutils literal">background:1</tt> in the second argument.</p>
+<p><strong>Using Explain</strong></p>
+<p>We can find out whether the queries we perform use an index or not. Appending <tt class="docutils literal">explain()</tt> method on the end of a query gives us information about whether index was used or not, which index was used, how many objects were scanned, how many results are there, how many seconds it took, etc.</p>
+<p><em>Choosing an Index*</em></p>
+<p>If there are multiple indexes for a key, then MongoDB has to decide which one to use (only one can be used for a query). What it does is that it runs benchmark for all the indexes internally and uses the one which took least amount of time.</p>
+<p><strong>Collection and Index Stats</strong></p>
+<p><tt class="docutils literal">db.coll_1.stats()</tt> can be used to get the statistics of collection which includes the total collection size, average document size, total index size and individual index sizes.</p>
+<p><tt class="docutils literal">db.coll_1.totalIndexSize()</tt> can be used to get the total index size for a collection.</p>
+<p><strong>Hinting an Index</strong></p>
+<p>We can manually specify which index to use by appending <tt class="docutils literal">hint()</tt> method to the query. For e.g., <tt class="docutils literal"><span class="pre">db.coll_1.hint({username:</span> <span class="pre">1});</span></tt> or if we want no index to be used for the query, then <tt class="docutils literal"><span class="pre">db.coll_1.hint({$natural:</span> <span class="pre">1});</span></tt></p>
+<p><strong>Profiling</strong></p>
+<p>There are 3 levels of logging-</p>
+<ul class="simple">
+<li>1 - Off</li>
+<li>2 - Log slow queries</li>
+<li>3 - Log all queries</li>
+</ul>
+<p>By default, all the queries that take more than 1000ms are logged into the <tt class="docutils literal">mongod</tt> instance's log. This value can be changed to, for e.g. 2ms by running <tt class="docutils literal">$ mongod <span class="pre">--profile</span> 1 <span class="pre">--slowms</span> 2</tt>.</p>
+<p>Logs can be checked using <tt class="docutils literal"><span class="pre">db.systems.profile.find();</span></tt>.</p>
+<p>Logs for specific collections cab be done like this - <tt class="docutils literal"><span class="pre">db.systems.profile.find({ns:</span> <span class="pre">/dbName.collName/}).sort(ts:</span> 1);</tt>. This query will find logs for collName collection in dbName database and sort it by timestamp.</p>
+<p>Current profiling level can be checked using <tt class="docutils literal"><span class="pre">db.getProfilingLevel();</span></tt> and status using <tt class="docutils literal">db.getProfilingStatus</tt>.</p>
+<p>Profiling status can be set using <tt class="docutils literal">db.setProfilingLevel(2, 10)</tt>. This will change profiling level to 1 and log queries that take more than 10ms.</p>
+<p><strong>mongotop and mongostat</strong></p>
+<p>Similar to unix's top program which give high level view and gives info about which collection are taking how much resource. mongotop takes one argument which is the time interval to refresh the data in seconds.</p>
+<p>mongostat is similar to unix's iostat command. It shows all the different type of operations happening, database size, number of connection. One of the interesting thing it shows is <tt class="docutils literal">idx miss %</tt> which tells the % of queries where the index was used but it has to hit the disk since there wasn't enough memory to accomodate the index.</p>
+</div>
+<div class="section" id="aggregation">
+<h2>Aggregation</h2>
+<p>Example of an aggregation query -</p>
+<p><tt class="docutils literal">db.products.aggregate( [ { $group: { _id: &quot;$manufacturer&quot;, num_products: {$sum: 1} } } ] );</tt></p>
+<p>Here, the aggregate method takes an array as the argument. It contains different aggregation queries. Here we group by manyfacturer name and then sum the number of products. The value to <tt class="docutils literal">$group</tt> key is the schema for the result. The result will contain <tt class="docutils literal">_id</tt> field with the manufacturer's name and <tt class="docutils literal">num_products</tt> field with number of respective total products. For every product in a group, it will add 1 (which we specified) to the <tt class="docutils literal">num_products</tt> field.</p>
+<p>There are various stages for any aggregation query and results can be pipelined through these stages -</p>
+<ul class="simple">
+<li>$project</li>
+<li>$match</li>
+<li>$group</li>
+<li>$sort</li>
+<li>$skip</li>
+<li>$limit</li>
+<li>$unwind</li>
+</ul>
+<p><strong>Compound Grouping</strong></p>
+<p><tt class="docutils literal">db.products.aggregate( [ { $group: { _id: {manufacturer: &quot;$manufacturer&quot;, category: <span class="pre">&quot;$category&quot;},</span> num_products: {$sum: 1} } } ] );</tt></p>
+<p><strong>Aggregation Expression Overview</strong></p>
+<ul class="simple">
+<li>$sum</li>
+<li>$avg</li>
+<li>$min</li>
+<li>$max</li>
+<li>$push</li>
+<li>$addtoSet</li>
+<li>$first</li>
+<li>$last</li>
+</ul>
+<p><strong>Using $sum</strong></p>
+<p><tt class="docutils literal">db.products.aggregate( [ { $group: { _id: &quot;$manufacturer&quot;, sum_prices: {$sum: &quot;$price&quot;} } } ] );</tt></p>
+<p>Here, for every product in the group, its <tt class="docutils literal">price</tt> field is added to the resulting document's <tt class="docutils literal">sum_prices</tt> field. So, the <tt class="docutils literal">sum_prices</tt> field will contain the total price for products for every manufacturer.</p>
+<p><strong>Using $avg</strong></p>
+<p><tt class="docutils literal">db.products.aggregate( [ { $group: { _id: &quot;$category&quot;, avg_price: {$avg: &quot;$price&quot;} } } ] );</tt></p>
+<p>This will show the average price for each category.</p>
+<p><strong>Using $addToSet</strong></p>
+<p><tt class="docutils literal">db.products.aggregate( [ { $group: { _id: &quot;$manufacturer&quot;, categories: {$addToSet: &quot;$category&quot;} } } ] );</tt></p>
+<p>The resulting document will contain keys named <tt class="docutils literal">categories</tt> which will contain the name of the categories (in a set (array with unique elements)) for the corresponding manufacturer.</p>
+<p><strong>Using $push</strong></p>
+<p><tt class="docutils literal">db.products.aggregate( [ { $group: { _id: &quot;$manufacturer&quot;, categories: {$push: &quot;$category&quot;} } } ] );</tt></p>
+<p>Similar to <tt class="docutils literal">%addToSet</tt> but doesn't makes a set with unique items, rather makes a normal array which might contain duplicates.</p>
+<p><strong>Using $max and $min</strong></p>
+<p><tt class="docutils literal">db.products.aggregate( [ { $group: { _id: &quot;$manufacturer&quot;, max_price: {$max: &quot;$price&quot;} } } ] );</tt></p>
+<p>Finds the maximum price for the product by the manufacturers.</p>
+<p><strong>Double $group stages</strong></p>
+<p><tt class="docutils literal">db.grades.aggregate([ {$group: {_id: {class_id: &quot;$class_id&quot;, student_id: <span class="pre">&quot;$student_id&quot;},</span> average: {$avg: <span class="pre">&quot;$score&quot;}}},</span> {$group: {_id: &quot;$_id.class_id&quot;, average: {$avg: <span class="pre">&quot;$average&quot;}}}</span> ]);</tt></p>
+<p>This will pipe the result from first aggregation to the second one.</p>
+<p><strong>$project</strong></p>
+<p><tt class="docutils literal">$project</tt> is used for reshaping/projecting the document as they come through the pipeline. Its a 1:1 stage of the pipeline, same number of document leave the <tt class="docutils literal">$project</tt> phase which come in. It can -</p>
+<ul>
+<li><p class="first">remove keys</p>
+</li>
+<li><p class="first">add new keys</p>
+</li>
+<li><p class="first">reshape keys</p>
+</li>
+<li><dl class="first docutils">
+<dt>use some simple functions on keys</dt>
+<dd><ul class="first last simple">
+<li>$toUpper</li>
+<li>$toLower</li>
+<li>$add</li>
+<li>$multiply</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="highlight"><pre><span class="nx">db</span><span class="p">.</span><span class="nx">products</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">([{</span>
+    <span class="nx">$project</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">_id</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nx">maker</span><span class="o">:</span> <span class="p">{</span><span class="nx">$toLower</span><span class="o">:</span> <span class="s2">&quot;$manufacturer&quot;</span><span class="p">},</span> <span class="c1">// manufacturer name to lowercase</span>
+        <span class="nx">details</span><span class="o">:</span> <span class="p">{</span><span class="nx">category</span><span class="o">:</span> <span class="s2">&quot;$category&quot;</span><span class="p">,</span>
+                  <span class="nx">price</span><span class="o">:</span> <span class="p">{</span><span class="nx">$multiply</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;$price&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">]}}</span> <span class="c1">// 10 x&#39;es the price</span>
+        <span class="p">},</span>
+        <span class="nx">item</span><span class="o">:</span> <span class="s2">&quot;$name&quot;</span>
+<span class="p">}]);</span>
+</pre></div>
+<p><strong>$match</strong></p>
+<p>It acts as a filter for the incoming documents. E.g. -</p>
+<!-- code-block::javascript
+
+db.zips.aggregate([
+    {$match: {state: "NY"}}, //filter and pipe only NY state documents
+    {$group: {
+        _id: "$city",
+        population: {$sum: "$pop"}, // sums the population
+        zip_codes: {$addToSet: "$_id"} // creates set of zip codes
+    }}
+]); -->
+<p><strong>$sort</strong></p>
+<p><tt class="docutils literal">$sort</tt> operation happens inside the memory.</p>
+<!-- code-block::javascript
+
+db.zips.aggregate([
+    {$match: {state: "NY"}}, //filter and pipe only NY state documents
+    {$group: {
+        _id: "$city",
+        population: {$sum: "$pop"}, // sums the population
+        zip_codes: {$addToSet: "$_id"} // creates set of zip codes
+    }},
+    {$sort: {
+        population: -1 // sorts the result in descending order of population
+    }}
+]); -->
+<p><strong>$limit and $skip</strong></p>
+<p>Very similar to how how sort, skip and limit work with <tt class="docutils literal">find</tt> method queries.</p>
+<!-- code-block::javascript
+
+db.zips.aggregate([
+    {$match: {state: "NY"}}, //filter and pipe only NY state documents
+    {$sort: {
+        pop: -1 // sorts the result in descending order of population
+    }},
+    {$skip: 10}, // skips first 10 documents
+    {$limit: 5} // limits to only 5 results
+]); -->
+<p><strong>$first and $last</strong></p>
+<p>As the names suggest, these will help get the the first and the last documents. E.g., if we want to find the largest city in each state -</p>
+<div class="highlight"><pre><span class="nx">db</span><span class="p">.</span><span class="nx">zips</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">([</span>
+    <span class="p">{</span><span class="nx">$group</span><span class="o">:</span> <span class="p">{</span><span class="nx">_id</span><span class="o">:</span> <span class="p">{</span><span class="nx">state</span><span class="o">:</span> <span class="s2">&quot;$state&quot;</span><span class="p">,</span> <span class="nx">city</span><span class="o">:</span> <span class="s2">&quot;$city&quot;</span><span class="p">},</span> <span class="nx">population</span><span class="o">:</span> <span class="p">{</span><span class="nx">$sum</span><span class="o">:</span> <span class="nx">pop</span><span class="p">}}},</span>
+    <span class="p">{</span><span class="nx">$sort</span><span class="o">:</span> <span class="p">{</span><span class="s2">&quot;_id.state&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">population</span><span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">}},</span>
+    <span class="c1">// since the document was sorted by descending order of population, highest population city is at the top</span>
+    <span class="p">{</span><span class="nx">$group</span><span class="o">:</span> <span class="p">{</span><span class="nx">_id</span><span class="o">:</span> <span class="s2">&quot;_id.state&quot;</span><span class="p">,</span> <span class="nx">city</span> <span class="p">{</span><span class="nx">$first</span><span class="o">:</span> <span class="s2">&quot;$_id.city&quot;</span><span class="p">}}}</span> <span class="c1">// get the top/first city</span>
+<span class="p">]);</span>
+</pre></div>
+<p><strong>$unwind</strong></p>
+<p>Unwind can be used to unwind an array inside the document. After an unwind operation on a key containing array, new documents are formed with the remainder of the document and each elements from the array.</p>
+<p><tt class="docutils literal"><span class="pre">db.coll_1.aggregate([{$unwind:</span> <span class="pre">$b}]);</span></tt></p>
+<p><tt class="docutils literal">{a: 1, b: [2, 3]}</tt> will get unwinded to <tt class="docutils literal">{a:1, b:2}</tt> and <tt class="docutils literal">{a:1, b:3}</tt>.</p>
+<p><strong>Limitations of the Aggregation Framework</strong></p>
+<ul class="simple">
+<li>Result document limited to 16MB of memory</li>
+<li>Limited to use only 10% of the memory of the machine</li>
+<li>In a sharded environment, any aggregation query is brought back to <tt class="docutils literal">mongos</tt> instance after the first grouping by a <tt class="docutils literal">mongod</tt> instance which might affect performance on the machine running <tt class="docutils literal">mongos</tt> if the data set is huge.</li>
+</ul>
+<p>Alternatives to the aggregation framework - mapreduce, hadoop.</p>
+</div>
+<div class="section" id="application-engineering">
+<h2>Application Engineering</h2>
+<p><strong>Write Concern</strong></p>
+<p>In the mongo shell, every time a query is made, the shell calls the <tt class="docutils literal">getLastError</tt> method to see if it succeeded or failed. But while using drivers such as PyMongo, this is not the default behavior. We have to set the safe mode values to make the driver check if there was any error. It takes two parameter - w and j. Following are the different cases -</p>
+<ul class="simple">
+<li>w 0, j 0 - fire and forget, doesn't checks for errors</li>
+<li>w 1, j 0 - acknowledge that the query was received but doesn't checks if it succeeded (default for the drivers)</li>
+<li>w 1, j 1 - commit to journal, means that query was received, there is no error and it is fault tolerant in case of power loss since the query stored in the journal can be used for recovery (recommended)</li>
+</ul>
+<p><strong>Network Error</strong></p>
+<p>If the application sends the query to mongod over the network then there is a possibility of uncertainity whether the query was completed or not due to network error. For e.g., if the query was made, mongod received it but then suddenly the network went down. The mongod may have executed the query and but the application didn't receive any acknowledgement so it has no idea whether the query succeeded or not. Thogu application can later the database to see if the change was made or not but still there is a certain level of uncertainity.</p>
+<p><strong>Replication</strong></p>
+<p>To maintain availability and fault tolerance in case of downtime of a mongod server, replica sets are used. They mirror the same data and synchronize it asynchronously. At least 3 mongod servers are required in a replica set. One of them is primary to which the application or mongos talks and rest are secondary. If the primary one goes down, then election is done by the rest and one is chosen are primary. When the ex-primary server comes back up, it joins the set as a secondary server.</p>
+<p>Type of Replica Set Nodes -</p>
+<ul class="simple">
+<li>Regular - Normal ones which can take place of the primary one if it goes down</li>
+<li>Arbiter - Just present for voting purposes.</li>
+<li>Delayed/Regular - Is usually a few hours behind the primary node and is present for disaster recovery. It cannot participate in voting and cannot become a primary node.</li>
+<li>Hidden - Used for different purposes, e.g. analytics. It cannot become the primary node but can participate in the voting.</li>
+</ul>
+<p><strong>Write Consistency</strong></p>
+<p>For a strong consistency between read and writes, it is recommended to read from and write to only the primary node. Though it is possible to do read operation from secondary nodes (by running <tt class="docutils literal"><span class="pre">rs.slaveOk();</span></tt> on them) but there is a chance that you might get stale data if the synchonization didn't occur fast enough.</p>
+<p><strong>Create Replica Set</strong></p>
+<p>Here for the sake of example, we will make the replicas sets using the following command on our single machine-</p>
+<div class="highlight"><pre>mkdir -p /data/rs1 /data/rs2 /data/rs3
+mongod --replSet rs1 --logpath <span class="s2">&quot;1.log&quot;</span> --dbpath /data/rs1 --port 27017 --fork
+mongod --replSet rs1 --logpath <span class="s2">&quot;2.log&quot;</span> --dbpath /data/rs2 --port 27018 --fork
+mongod --replSet rs1 --logpath <span class="s2">&quot;3.log&quot;</span> --dbpath /data/rs3 --port 27019 --fork
+</pre></div>
+<p><tt class="docutils literal"><span class="pre">--replSet</span> rs1</tt> makes sure that all the three instances belong to same replica set and <tt class="docutils literal"><span class="pre">--fork</span></tt> makes it run in the background so that 3 different shells are not required. At this point, all 3 instances do not know about each other.</p>
+<p>Now we need to create a configuration to make sure that they work in co-operation.</p>
+<div class="highlight"><pre><span class="nx">config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">_id</span><span class="o">:</span> <span class="s2">&quot;rs1&quot;</span><span class="p">,</span> <span class="c1">// replSet we used to run the instances</span>
+    <span class="nx">members</span><span class="o">:</span> <span class="p">[</span>
+        <span class="c1">// We don&#39;t want host 0 to be the primary node, so setting priority 0</span>
+        <span class="c1">// And we are delaying it by 5 seconds.</span>
+        <span class="p">{</span><span class="nx">_id</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">host</span><span class="o">:</span> <span class="s2">&quot;vivekagr.local: 27017&quot;</span><span class="p">,</span> <span class="nx">priority</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">slaveDelay</span><span class="o">:</span> <span class="mi">5</span><span class="p">},</span>
+        <span class="p">{</span><span class="nx">_id</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">host</span><span class="o">:</span> <span class="s2">&quot;vivekagr.local: 27017&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="nx">_id</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">host</span><span class="o">:</span> <span class="s2">&quot;vivekagr.local: 27019&quot;</span><span class="p">},</span>
+    <span class="p">]</span>
+<span class="p">};</span>
+<span class="nx">rs</span><span class="p">.</span><span class="nx">initiate</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
+<span class="nx">rs</span><span class="p">.</span><span class="nx">status</span><span class="p">();</span>
+</pre></div>
+<p>We need to open mongo shell and connect to either port 27018 or 27019 and not 27017 since we can't run the configuration step on a node that cannot become a primary node.</p>
+<p>Replication internally works by using a capped collection <tt class="docutils literal">oplog.rs</tt> in <tt class="docutils literal">local</tt> database. Secondary nodes query primary to check if any new data has been added to the <tt class="docutils literal">oplog.rs</tt> and then it is synchronized.</p>
+<p><strong>Failover and Rollback</strong></p>
+<p>Suppose if the secondary nodes are lagging few seconds behind the primary node and suddenly primary node goes offline then one of the secondary servers will be promoted to primary position but it won't have the writes for last few seconds. Now, when the ex-primary node comes online and while synchronizing data, it sees that it has writes which were not synchronized with other nodes, it will rollback that data and write it to a rollback log.</p>
+<p>If an application is writing or reading data during a failover and election situation, exception will occur so it necessary to catch such exception and handle the situation accordingly.</p>
+<p><strong>Revisiting Write Concern</strong></p>
+<p>Suppose we have 3 nodes in total - 1 primary and 2 secondary. Now consider the following vaues of w and j.</p>
+<ul class="simple">
+<li><tt class="docutils literal">w = 1</tt> - wait for just nodes (primary) to acknowledge the write</li>
+<li><tt class="docutils literal">w = 2</tt> - wait for two nodes (primary &amp; one secondary) to acknowledge the write</li>
+<li><tt class="docutils literal">w = 3</tt> - wait for three nodes (all) to acknowledge the write</li>
+<li><tt class="docutils literal">j = 1</tt> - wait for only primary to write it all the way down to disk and journal</li>
+</ul>
+<p><tt class="docutils literal">wtimeout</tt> refers to the maximum time to wait.</p>
+<p>These values can be set in either of the three ways - while configuring the replica set, while making connection to the mongod or inside the collection itself.</p>
+<p><tt class="docutils literal">w: majority</tt> can also be set and is considered to be the best practice. It avoids having the data rolled back in case of a single node failure. Take the three node example. If you set w:majority, then at least one other node will have the date at the time of failover. That node will be preferred to take over as primary. The node that is furthest ahead will be preferred in the election of a new primary.</p>
+<p><strong>Read Preferences</strong></p>
+<p>There are various read preferences that can be set -</p>
+<ul class="simple">
+<li>primary</li>
+<li>secondary</li>
+<li>secondary preferred</li>
+<li>primary preferred</li>
+<li>nearest</li>
+<li>tagging</li>
+</ul>
+</div>
+<div class="section" id="sharding">
+<h2>Sharding</h2>
+<p>To get horizontal scalability, we break up the database on to multiple logical hosts and that is done according to a shard key. Shard key is some part of the document itself (usually a unique key for the collection). There has to be an index present beforehand for the key which is going to be used as the shard key.</p>
+<p><strong>Building a Sharding Environment</strong></p>
+<p>See <tt class="docutils literal">init_sharded_env.sh</tt> file for the process and code.</p>
+<p><strong>Implications of sharding on development</strong></p>
+<ul class="simple">
+<li>Every query should include a shard key</li>
+<li>Shard key is immutable</li>
+<li>Index that starts with the shard key is required</li>
+<li>For update commands, eithe rshard key has to be provided or multi key set to true (which results in the broadcast of the query to all the nodes)</li>
+<li>No shard key in query means that query is broadcasted to all nodes which is inefficient</li>
+<li>No unique key unless part of the shard key because mongos has no way of knowing that whether the copy exists on other shards since each shard has its own set of unique keys</li>
+</ul>
+</div>
+]]>
+        </content>
+    </entry><entry>
         <title type="html"><![CDATA[S3 - Basics of Architecture, Machine Code]]></title>
         <author><name>Vivek Agarwal</name></author>
         <link href="http://vivek.im/notes/notes/hw-sw-interface-s3.html"/>
