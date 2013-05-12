@@ -43,9 +43,11 @@
         <div class="section" id="performance">
 <h2>Performance</h2>
 <p>Performance is not just about CPU clock speed. Data and instructions reside in the memory and they must be fetched to the CPU from memory to operate upon.</p>
-<p>CPU&lt;-&gt;Memory bandwidth can bottleneck performance. Two things can be done for this-
-- Increase memory bandwidth so that more data can travel at a time. (DDR1 -&gt; DDR2 -&gt; DDR3)
-- Move less data into/out of the CPU. This can be achieved by putting a small amount of memory on the CPU itself (which is called cache memory).</p>
+<p>CPU&lt;-&gt;Memory bandwidth can bottleneck performance. Two things can be done for this:</p>
+<ul class="simple">
+<li>Increase memory bandwidth so that more data can travel at a time. (DDR1 -&gt; DDR2 -&gt; DDR3)</li>
+<li>Move less data into/out of the CPU. This can be achieved by putting a small amount of memory on the CPU itself (which is called cache memory).</li>
+</ul>
 </div>
 <div class="section" id="binary-representations">
 <h2>Binary Representations</h2>
@@ -136,10 +138,9 @@
 <p>Variable declaration: <tt class="docutils literal">int x, y;</tt></p>
 <p>The two variables will find two locations in memory in which to store 2 integers (1 word each).</p>
 <p>Pointer declaration: <tt class="docutils literal">int *ptr;</tt></p>
-<p>Declares aa variable <tt class="docutils literal">ptr</tt> that is a pointer to a data item that in an integer. This will store an address rather than a value.</p>
+<p>Declares a variable <tt class="docutils literal">ptr</tt> that is a pointer to a data item that in an integer. This will store an address rather than a value.</p>
 <p>Assignment to a pointer: <tt class="docutils literal">ptr = &amp;x;</tt></p>
 <p>This assigns ptr to point to the address where x is located. <tt class="docutils literal">&amp;</tt> is used to get the address of a variable.</p>
-<p>Get value pointed to by a pointer:</p>
 <p>Dereference operator (<tt class="docutils literal">*</tt>) is used to get the value pointed to by a pointer. <tt class="docutils literal">*ptr</tt> will give us the value at the memory address given by the value of <tt class="docutils literal">ptr</tt>.</p>
 <p>Examples</p>
 <ul class="simple">
@@ -160,7 +161,7 @@
 </div>
 <div class="section" id="arrays">
 <h2>Arrays</h2>
-<p>Arrays represent adjacent locations in memory that store same type of data objects. E.g. <tt class="docutils literal">int big_array[128];</tt> allocates 512 adjacent bytes in memory.</p>
+<p>Arrays represent adjacent locations in memory that store same type of data objects. E.g. <tt class="docutils literal">int big_array[128];</tt> allocates 512 adjacent bytes (size of int- 4 bytes x 128) in memory.</p>
 <div class="highlight"><pre><span class="cm">/* Lets assume that array starts at 0x00ff0000 */</span>
 <span class="kt">int</span> <span class="o">*</span><span class="n">array_ptr</span><span class="p">;</span>
 <span class="kt">int</span> <span class="n">big_array</span><span class="p">[</span><span class="mi">128</span><span class="p">];</span>
@@ -171,6 +172,7 @@
 <span class="n">array_ptr</span> <span class="o">=</span> <span class="n">big_array</span> <span class="o">+</span> <span class="mi">3</span><span class="p">;</span> <span class="cm">/* 0x00ff000c (adds 3 * size of int) */</span>
 <span class="o">*</span><span class="n">array_ptr</span> <span class="o">=</span> <span class="o">*</span><span class="n">array_ptr</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="cm">/* 0x00ff000c (but big_array[3] is incremented) */</span>
 </pre></div>
+<p>For <tt class="docutils literal">array_ptr = big_array;</tt>, when C sees that we are trying to assign an array to a different variable that is a pointer, it automatically assigns the memory address of the array.</p>
 <p>The last one is a bit complicated. Lets first see RHS. <tt class="docutils literal">*array_ptr</tt> gets the value pointed to by the pointer <tt class="docutils literal">array_ptr</tt> which is <tt class="docutils literal">big_array[3]</tt> as seen in second-last line. Now in LHS, <tt class="docutils literal">*array_ptr</tt> says to go to the location pointed to by <tt class="docutils literal">array_ptr</tt> which is the address of <tt class="docutils literal">big_array[3]</tt>. So, in effect, it is equivalent to psuedo-code <tt class="docutils literal">big_array[3] = big_array[3] + 1</tt>.</p>
 <p><tt class="docutils literal">array_ptr = &amp;big_array[130];</tt> - The array was only 128 element long but we are asking for index 130. But C doesn't give a fuck. It applies the same arithmetic calculation (adding 130 * size of int) and gives back address <tt class="docutils literal">0x00ff0208</tt>. Beware of this!</p>
 <p>In general, <tt class="docutils literal">&amp;big_array[i]</tt> is same as <tt class="docutils literal">(big_array + i)</tt>, which implicitly computes <tt class="docutils literal">&amp;big_array[0] + i * <span class="pre">sizeof(big_array[0]);</span></tt></p>
@@ -179,11 +181,12 @@
 <h2>Representing strings</h2>
 <p>A C-style string is represented by an array of bytes. Elements are one-byte ASCII codes for each character. A 0 byte marks the end of the array.</p>
 <p><tt class="docutils literal">char S[4] = &quot;lola&quot;;</tt></p>
+<p>Getting the address of an integer in the memory.</p>
 <div class="highlight"><pre><span class="kt">void</span> <span class="nf">show_bytes</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">start</span><span class="p">,</span> <span class="kt">int</span> <span class="n">len</span><span class="p">)</span> <span class="p">{</span>
     <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
     <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">len</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
         <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%p</span><span class="se">\t</span><span class="s">0x%.2x</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">start</span><span class="o">+</span><span class="n">i</span><span class="p">,</span> <span class="o">*</span><span class="p">(</span><span class="n">start</span><span class="o">+</span><span class="n">i</span><span class="p">));</span>
-    <span class="n">print</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
 <span class="p">}</span>
 <span class="kt">void</span> <span class="nf">show_int</span> <span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">show_bytes</span><span class="p">((</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">x</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">));</span>

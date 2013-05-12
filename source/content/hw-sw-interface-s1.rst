@@ -10,7 +10,8 @@ Performance
 
 Performance is not just about CPU clock speed. Data and instructions reside in the memory and they must be fetched to the CPU from memory to operate upon.
 
-CPU<->Memory bandwidth can bottleneck performance. Two things can be done for this-
+CPU<->Memory bandwidth can bottleneck performance. Two things can be done for this:
+
 - Increase memory bandwidth so that more data can travel at a time. (DDR1 -> DDR2 -> DDR3)
 - Move less data into/out of the CPU. This can be achieved by putting a small amount of memory on the CPU itself (which is called cache memory).
 
@@ -112,13 +113,11 @@ The two variables will find two locations in memory in which to store 2 integers
 
 Pointer declaration: ``int *ptr;``
 
-Declares aa variable ``ptr`` that is a pointer to a data item that in an integer. This will store an address rather than a value.
+Declares a variable ``ptr`` that is a pointer to a data item that in an integer. This will store an address rather than a value.
 
 Assignment to a pointer: ``ptr = &x;``
 
 This assigns ptr to point to the address where x is located. ``&`` is used to get the address of a variable.
-
-Get value pointed to by a pointer:
 
 Dereference operator (``*``) is used to get the value pointed to by a pointer. ``*ptr`` will give us the value at the memory address given by the value of ``ptr``.
 
@@ -151,7 +150,7 @@ RHS must evaluate to a value (could be an address).
 Arrays
 ------
 
-Arrays represent adjacent locations in memory that store same type of data objects. E.g. ``int big_array[128];`` allocates 512 adjacent bytes in memory.
+Arrays represent adjacent locations in memory that store same type of data objects. E.g. ``int big_array[128];`` allocates 512 adjacent bytes (size of int- 4 bytes x 128) in memory.
 
 .. code-block:: c
 
@@ -164,6 +163,8 @@ Arrays represent adjacent locations in memory that store same type of data objec
     array_ptr = &big_array[3]; /* 0x00ff000c (adds 3 * size of int) */
     array_ptr = big_array + 3; /* 0x00ff000c (adds 3 * size of int) */
     *array_ptr = *array_ptr + 1; /* 0x00ff000c (but big_array[3] is incremented) */
+
+For ``array_ptr = big_array;``, when C sees that we are trying to assign an array to a different variable that is a pointer, it automatically assigns the memory address of the array.
 
 The last one is a bit complicated. Lets first see RHS. ``*array_ptr`` gets the value pointed to by the pointer ``array_ptr`` which is ``big_array[3]`` as seen in second-last line. Now in LHS, ``*array_ptr`` says to go to the location pointed to by ``array_ptr`` which is the address of ``big_array[3]``. So, in effect, it is equivalent to psuedo-code ``big_array[3] = big_array[3] + 1``.
 
@@ -178,13 +179,15 @@ A C-style string is represented by an array of bytes. Elements are one-byte ASCI
 
 ``char S[4] = "lola";``
 
+Getting the address of an integer in the memory.
+
 .. code-block:: c
 
     void show_bytes(char *start, int len) {
         int i;
         for (i = 0; i < len; i++)
             printf("%p\t0x%.2x\n", start+i, *(start+i));
-        print("\n");
+        printf("\n");
     }
     void show_int (int x) {
         show_bytes((char *) &x, sizeof(int));
