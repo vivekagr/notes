@@ -3,9 +3,218 @@
     <title>Study Notes</title>
     <link href="http://vivek.im/notes/feed.xml" rel="self" />
     <link href="http://vivek.im/notes/" />
-    <updated>2013-05-03T19:01:15+05:30</updated>
+    <updated>2013-05-13T04:52:17+05:30</updated>
     <id>http://vivek.im/notes/</id>
     <entry>
+        <title type="html"><![CDATA[S3 - Basics of Architecture, Machine Code]]></title>
+        <author><name>Vivek Agarwal</name></author>
+        <link href="http://vivek.im/notes/notes/hw-sw-interface-s3.html"/>
+        <published>2013-05-04T00:00:00+05:30</published>
+        <updated>2013-05-13T04:52:17+05:30</updated>
+        <id>http://vivek.im/notes/notes/hw-sw-interface-s3.html</id>
+        <category scheme="http://vivek.im/notes/tag/hwswint/" term="hwswint" label="hwswint" />
+        <content type="html" xml:base="http://vivek.im/notes/" xml:lang="en">
+            <![CDATA[ <p>Translation Impacts Performance</p>
+<p>The time required to execute a program depends on:</p>
+<ul class="simple">
+<li>The program (as written in C, for instance)</li>
+<li>The compiler: what set of assebler it translates the C program into</li>
+<li>The Instruction Set Architecture (ISA): what set of instructions it makes available to the compiler</li>
+<li>The hardware implementation: how much time it takes to execute an instruction</li>
+</ul>
+<p>ISA (Instruction Set): The parts of processor one needs to understand to write assembly code. (What is directly visible to the software)</p>
+<p>The ISA defines:</p>
+<ul class="simple">
+<li>The system's state (e.g. registers, memory, program counter)</li>
+<li>The instructions that CPU can execute</li>
+<li>The effect that each of these instructions will have on the system state</li>
+</ul>
+<p>General ISA Design Decisions:</p>
+<ul>
+<li><dl class="first docutils">
+<dt>Instructions</dt>
+<dd><ul class="first last simple">
+<li>What instructions are available? What do they do?</li>
+<li>How are they encoded?</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Registers</dt>
+<dd><ul class="first last simple">
+<li>How many registers are there?</li>
+<li>How wide are they?</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Memory</dt>
+<dd><ul class="first last simple">
+<li>How do you specify a memory location?</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="section" id="x86">
+<h2>x86</h2>
+<p>x86 is one type of ISA. Processors that implement the x86 ISA completely dominate the server, desktop and laptop markets.</p>
+<p>Evolutionary design</p>
+<ul class="simple">
+<li>Backwards compatible up until Intel 8086, introduced in 1978</li>
+<li>Added more features as time goes on</li>
+</ul>
+<p>x86 can be defined as Complex Instruction Set Computer (CISC)</p>
+<ul class="simple">
+<li>Many different instructions with many different formats but only small subset is encountered with Linux programs</li>
+<li>(as opposed to Reduced Instructions Set Computers (RISC) which use simpler instructions)</li>
+</ul>
+<p>Intel and AMD both develop x86 and x86-64 processors with different hardware implementations underneath. But since the ISA (which is an abstraction) remains the same i.e. x86, same programs can run on both of them.</p>
+</div>
+<div class="section" id="assembly-programmer-s-view">
+<h2>Assembly Programmer's View</h2>
+<p>Programmer-Visible State</p>
+<ul>
+<li><dl class="first docutils">
+<dt>PC: Program Counter</dt>
+<dd><ul class="first last simple">
+<li>Address of the next instructions</li>
+<li>Called &quot;EIP&quot; (IA32) or &quot;RIP&quot; (x86-64)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Register file</dt>
+<dd><ul class="first last simple">
+<li>Heavily used program data</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Condition codes</dt>
+<dd><ul class="first last simple">
+<li>Store status information about most recent arithmetic operation</li>
+<li>Used for conditional branching</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Memory</dt>
+<dd><ul class="first last simple">
+<li>Byte addressable memory</li>
+<li>Code, user data, (some) OS data</li>
+<li>Includes stack used to support procedures</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="section" id="assembly">
+<h2>Assembly</h2>
+<p>Three basic kinds of Instructions</p>
+<ul>
+<li><p class="first">Perform arithmetic function on register or memory data</p>
+</li>
+<li><dl class="first docutils">
+<dt>Transfer data between memory and register</dt>
+<dd><ul class="first last simple">
+<li>Load data from memory into register'</li>
+<li>Store register data into memory</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Transfer control</dt>
+<dd><ul class="first last simple">
+<li>Unconditional jumps to/from procedures</li>
+<li>Conditional branches</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Data Types</p>
+<ul>
+<li><dl class="first docutils">
+<dt>&quot;Integer&quot; data of 1, 2, 4 (IA32), or 8 (just in x86-64) bytes. Can be:</dt>
+<dd><ul class="first last simple">
+<li>Data values</li>
+<li>Addresses (untyped pointers)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">Floating point data of 4, 8, or 10 bytes</p>
+</li>
+<li><p class="first">No aggregate types such as arrays or structs, just contiguosly allocated bytes in memory</p>
+</li>
+</ul>
+<p>Turning C into Object Code</p>
+<ul>
+<li><p class="first">Code in files p1.c p2.c</p>
+</li>
+<li><dl class="first docutils">
+<dt>Compile using command <tt class="docutils literal">gcc <span class="pre">-01</span> p1.c p2.c <span class="pre">-o</span> p</tt></dt>
+<dd><ul class="first last simple">
+<li>Use basic optimizations (-01)</li>
+<li>Put result binary in file p</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Pathway</p>
+<ul class="simple">
+<li>text <tt class="docutils literal">C program (p1.c p2.c)</tt> -- Compiler (<tt class="docutils literal">gcc <span class="pre">-S</span></tt>) --</li>
+<li>--&gt; text <tt class="docutils literal">Asm program (p1.s p2.s)</tt> -- Assembler (gcc or as) --</li>
+<li>--&gt; binary <tt class="docutils literal">Object program (p1.o p2.o)</tt> -- Linker (gcc or ld) --</li>
+<li>--&gt; binary <tt class="docutils literal">Executable program (p)</tt> &lt;--- Static libraries (.a)</li>
+</ul>
+<p>Assembler</p>
+<ul class="simple">
+<li>Translates <tt class="docutils literal">.s</tt> into <tt class="docutils literal">.o</tt></li>
+<li>Binary encoding of each instruction</li>
+<li>Near complete image of executable code</li>
+<li>Missing links between code in different files</li>
+</ul>
+<p>Linker</p>
+<ul class="simple">
+<li>Resolves references between object files and (re)locates theie data</li>
+<li>Combines with static run-time libraries, e.g. code for <tt class="docutils literal">malloc</tt>, <tt class="docutils literal">printf</tt></li>
+<li>Some libraries are dynamically linked. Linking occurs when program begins execution</li>
+</ul>
+</div>
+<div class="section" id="disassemblers">
+<h2>Disassemblers</h2>
+<p><tt class="docutils literal">objdump <span class="pre">-d</span> &lt;file&gt;</tt></p>
+<ul class="simple">
+<li>Useful tool for examining object code</li>
+<li>Analyzes bit pattern series of instructions (delineates instructions)</li>
+<li>Produces near-exact rendition of assembly code</li>
+<li>Can be run either on the executable or .o files (object code).</li>
+</ul>
+<p>Alternatively, gdb debugger can also be used for disassembly.</p>
+</div>
+<div class="section" id="registers">
+<h2>Registers</h2>
+<p><strong>What is Register?</strong></p>
+<ul class="simple">
+<li>A location in the CPU that stores a small amount of data which can be accessed very quickly (once every clock cycle)</li>
+<li>Registers are at the heart of assembly programming. They are precious commodity in all architectures but especially x86</li>
+</ul>
+<p>IA32 has 8 different registers of size 32 bits each. Two of them are special purpose (stack pointer and base pointer).</p>
+<p>x86-64 has 16 registers each of size 64 bits (also backward compatible as 8, 16, 32 bits). They happen to be the superset of the previous architectures so they are backward compatible. Only one is for special purpose.</p>
+</div>
+]]>
+        </content>
+    </entry><entry>
         <title type="html"><![CDATA[S2 - Integer and Floating Point Numbers]]></title>
         <author><name>Vivek Agarwal</name></author>
         <link href="http://vivek.im/notes/notes/hw-sw-interface-s2.html"/>
