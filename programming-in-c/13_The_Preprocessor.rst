@@ -174,4 +174,4 @@ check if the ``DEBUG`` has been defined or not.
 
 Here, _MYSTUDIO_H is only defined if it is not already defined somewhere else. It works similarly to ``#ifdef`` but it causes the subsequent lines to be processed only if indicated symbol is not defined.
 
-``#undef`` can be used to undefine any defined name is necessary.
+``#undef`` can be used to undefine any defined name if necessary.
