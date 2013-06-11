@@ -73,10 +73,10 @@ But there is a separate convention for networks called **Network Byte Order**. O
 
 But how can you do this if you don't know the native Host Byte Order? Good news! You just get to assume the Host Byte Order isn't right, and you always run the value through a function to set it to Network Byte Order. The functions for convertion are -
 
-- ``htons()`` **h**ost **to** **n**etwork **s**hort
-- ``htonl()`` **h**ost **to** **n**etwork **l**ong
-- ``ntohs()`` **n**etwork **to** **h**ost **s**hort
-- ``ntohl()`` **n**etwork **to** **h**ost **l**ong
+- ``htons()`` **h**\ ost **to** **n**\ etwork **s**\ hort
+- ``htonl()`` **h**\ ost **to** **n**\ etwork **l**\ ong
+- ``ntohs()`` **n**\ etwork **to** **h**\ ost **s**\ hort
+- ``ntohl()`` **n**\ etwork **to** **h**\ ost **l**\ ong
 
 Basically, you'll want to convert the numbers to Network Byte Order before they go out on the wire, and convert them to Host Byte Order as they come in off the wire.
 
