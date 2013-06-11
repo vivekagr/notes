@@ -75,7 +75,32 @@ Graphs keeps popping up time and again and I feel ashamed with not being able to
 
 
 
+Cryptography and Web Security
+-----------------------------
 
+I'm very much interested in Cryptography and Web Sec but I haven't been able to devote any time towards it yet. I plan on doing Matasano Crypto Challenges soon though. Regarding Web Sec, I guess I have to brush up Javascript first.
+
+**Resources**
+
+- http://www.matasano.com/articles/crypto-challenges/
+- https://www.coursera.org/course/crypto I'm going to start this course within a week.
+- http://opensecuritytraining.info/Training.html
+- https://share.coursera.org/wiki/index.php/Crypto:Further_Reading
+- http://cacr.uwaterloo.ca/hac/
+- http://www.cs.umd.edu/~jkatz/imc.html
+
+Following books recommended by tptacek
+
+- http://www.amazon.com/The-Software-Security-Assessment-Vulnerabilities/dp/0321444426
+- http://www.amazon.com/The-Tangled-Web-Securing-Applications/dp/1593273886
+- http://www.amazon.com/The-Web-Application-Hackers-Handbook/dp/1118026470
+
+General blog posts and discussion
+
+- http://daeken.com/2013-03-17_So_You_Want_To_Be_A_Breaker__Pt__1__Web_Security.html
+- https://news.ycombinator.com/item?id=5862102
+- https://news.ycombinator.com/item?id=5775165
+- https://news.ycombinator.com/item?id=5390820
 
 
 
