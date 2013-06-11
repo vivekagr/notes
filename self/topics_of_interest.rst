@@ -85,6 +85,8 @@ I'm very much interested in Cryptography and Web Sec but I haven't been able to 
 - http://www.matasano.com/articles/crypto-challenges/
 - https://www.coursera.org/course/crypto I'm going to start this course within a week.
 - http://opensecuritytraining.info/Training.html
+- http://web-for-pentester.pentesterlab.com/introduction/
+- https://pentesterlab.com/
 - https://share.coursera.org/wiki/index.php/Crypto:Further_Reading
 - http://cacr.uwaterloo.ca/hac/
 - http://www.cs.umd.edu/~jkatz/imc.html

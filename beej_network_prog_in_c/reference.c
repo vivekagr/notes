@@ -116,6 +116,7 @@ int getaddrinfo(const char *node,     // e.g. "www.example.com" or IP
 
 // socket() prototype
 // used no matter we are the client or server
+// returns a socket descriptor that can be used in later system calls
 // returns -1 on error and global variable errno is set to error's value
 
 int socket(int domain, int type, int protocol);
