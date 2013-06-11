@@ -15,7 +15,7 @@ I want to get a good grasp of C since many other softwares I deal with are writt
 
 **Resources**
 
-- Kerninghan and Ritchie's book. I started with it but by midway I found it to be too dense and cryptic at times. So I decided to pick some other book with explains things in details.
+- Kerninghan and Ritchie's book. I started with it but by midway I found it to be too dense and cryptic at times. So I decided to pick some other book that explains things in details.
 - Programming in C by Stephen G. Kochan. I'm almost done with the book and know about the basics of C.
 - `Beej's Guide to Network Programming`_ explains low level networking stuff in C. I need to practice what I have learned about C, so what can be a better way to practice C than to learn another topic that I'm deeply interested in it.
 - `The Hardware/Software Interface`_ MOOC. I got into C via this course. I started it, completed 2-3 weeks worth of material but since I didn't know anything about C, I felt lost at times. So I decided to stop doing that course and learn C first. I will get back to it after a while.
@@ -25,13 +25,14 @@ Some more networking related resources:
 - http://shoe.bocks.com/net/
 - http://it.becs.ac.in/sukantadas/sockbook.pdf
 - http://www.flipkart.com/unix-network-programming-the-sockets-networking-api-volume-1-3rd/p/itmdytcz7jpfk49y
+- http://www.linuxhowtos.org/C_C++/socket.htm
 
 
 
 Objective C Language
 --------------------
 
-I primarily use Mac OS and being a programmer, it is natural for me to be interested in developing for the operating system. Also, since I already have got the basics of C, getting into Obj C shouldn't be a problem. I have also got some ideas for apps so I shouldn't avoid learning this.
+I primarily use Mac OS and being a programmer, it is natural for me to be interested in developing native applications for the operating system. Also, since I already have got the basics of C, getting into Obj C shouldn't be a problem. I have also got some ideas for apps so I shouldn't avoid learning this.
 
 **Resources**
 
