@@ -278,3 +278,23 @@ int getpeername(int sockfd, struct sockaddr *addr, int *addrlen);
 // returns 0 on successful completion, and -1 on error, setting errno as usual
 
 int gethostname(char *hostname, size_t size);
+
+
+
+
+// select() - synchronous i/o multiplexing
+// used for listening as well as reading from the open connections
+// gives you the power to monitor several sockets at the same time
+// it'll tell you which ones are ready for reading, which are ready for writing, and which sockets have raised exceptions
+// numfds should be set to the values of the highest file descriptor plus one
+// returns 0 on successful completion, and -1 on error, setting errno as usual
+
+int select(int numfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
+
+// Following are the function used to manupulate sets
+
+FD_SET(int fd, fd_set *set);    // Add fd to the set
+FD_CLR(int fd, fd_set *set);    // Remove fd from the set
+FD_ISSET(int fd, fd_set *set);  // Return true if fd in set
+FD_ZERO(fd_set *set);           // Clear all entries from set
+
