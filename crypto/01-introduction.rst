@@ -12,7 +12,7 @@ In Cryptography, both confidentiality and integrity have to be preserved. So, no
 
 Symmetric Encryption is the building block of data encryption. It is called symmetric because both the encryption and the decryption function use the same key. Encryption algorithm is (and should be) publicly known. Never use a proprietary cipher. Encryption algorithms in the public domain are tested by thousands of security experts and are much more safer to use than proprietary ones which are tested and designed by only a handful of people.
 
-``E(k, m) ==> c`` and ``D(k, c) ==> m``
+|E(k, m) ==> c| and |D(k, c) ==> m|
 
 where E and D are Encryption and Decryption functions, m is plain text, c is cipher-text and k is the secret key. In symmetric encryption, secret key is known only by the sending and the receiving parties.
 
@@ -94,18 +94,85 @@ Advanced modern cryptography was developed as a rigorous science where construct
 
 Discrete probability is always defined over a universe which is denoted by ``U``. This universe in our case is always going to be a finite set, very commonly |U = {0,1}^n| a set of all n bit strings which here is denoted by |{0,1}^n|. The number of elements in this set is always |2^n|.
 
-So, ``{0,1}^2 = {00, 01, 10, 11}``.
+So, |{0,1}^2 = {00, 01, 10, 11}|.
 
-Probability distribution ``P`` over ``U`` is a function ``P: U --> [0,1]`` (probability of every element in the set is between 0 and 1). The requirement for this to be true is that sum of all the probabilities be equal to 1.
+Probability distribution P over U is a function |P: U --> [0,1]| (probability of every element in the set is between 0 and 1). The requirement for this to be true is that sum of all the probabilities be equal to 1.
 
 **Examples of Probability Distribution**
 
 Under **uniform distribution**, every element in the universe is assigned exactly the sam weight.
 
-``for all x in U: P(x) = 1/|U|`` (``|U|`` means the size of universe/total num of elements)
+for all |x in U: P(x) = 1/|U|| (``|U|`` means the size of universe/total num of elements)
 
-**Point distribution** at ``x[0]: P(x[0]) = 1, for all x!=x[0]: P(x) = 0``. Here, all the weight is assigned to ``x[0]`` and none to the remaining elements.
+**Point distribution** at |x[0]: P(x[0]) = 1, for all x!=x[0]: P(x) = 0|. Here, all the weight is assigned to |x[0]| and none to the remaining elements.
 
-.. |U = {0,1}^n| image:: http://latex.codecogs.com/gif.latex?U%20%3D%20%5C%7B0%2C1%5C%7D%5En
-.. |{0,1}^n| image:: http://latex.codecogs.com/gif.latex?%5C%7B0%2C1%5C%7D%5En
-.. |2^n| image:: http://latex.codecogs.com/gif.latex?2%5En
+
+**Events**
+
+|A subset of U: Pr[A] = sum of all P(x) where x belongs to A is [0,1] (between 0 and 1)|
+
+Note that |Pr[U]=1|. The set A here is called event.
+
+
+**Union Bound** - For events |A1| and |A2|
+
+|Pr[A1 U A2] <= Pr[A1] + Pr[A2]|
+
+And if |Pr[A1 intersection A2] = null then Pr[A1 union A2] = Pr[A1] + Pr[A2]|
+
+
+**Random Variable**
+
+A random variable ``X`` is a function |X:U --> V| (from the universe into some set ``V``). Set ``V`` is where the random variable takes its value.
+
+Example: |X: {0,1}^n --> {0,1}; X(y) = lsb(y) in {0,1}|
+
+Suppose we have a random variable ``X``, which maps the universe |{0,1}^n| into the set |{0,1}|. So, the value of ``X`` is either 0 or 1. Given a particular ``n`` bit string sample ``y`` in the universe, random variable will just output the lsb (least significant bit) ``y``.
+
+For the uniform distribution on ``U``: |Pr[X=0] = 1/2 ; Pr[X=1] = 1/2|
+
+**Uniform Random Variable**
+
+Let U be some set, e.g. |U = {0,1}^n| then
+
+|r <--R-- U| denotes a uniform random variable ``r`` over ``U`` for all |a in U such that Pr[r = a] = 1/sizeof(U)|
+
+Formally, r is the identity function: |r(x)=x for all x in U|
+
+
+**Deterministic Algorithm** - For a particular input ``m``, always the same output ``y`` is generated.
+
+|y <--  A(m)|
+
+**Randomized Algorithm** - It takes input ``m`` and has implicit argument ``r``, where ``r`` is sampled anewed every time the function is run. ``n`` is sampled randomly from set of ``n`` bit strings.
+
+|y <-- A(m; r) where r <--R-- {0,1}^n|
+
+
+.. |E(k, m) ==> c| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20E%28k%2C%20m%29%20%5Crightarrow%20c
+.. |D(k, c) ==> m| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20D%28k%2C%20c%29%20%5Crightarrow%20m
+.. |U = {0,1}^n| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20U%20%3D%20%5C%7B0%2C1%5C%7D%5En
+.. |{0,1}^n| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20%5C%7B0%2C1%5C%7D%5En
+.. |2^n| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%202%5En
+.. |{0,1}^2 = {00, 01, 10, 11}| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20%5C%7B0%2C1%5C%7D%5E2%20%3D%20%5C%7B00%2C%2001%2C%2010%2C%2011%5C%7D
+.. |P: U --> [0,1]| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20P%3A%20U%20%5Crightarrow%20%5B0%2C1%5D
+.. |x in U: P(x) = 1/|U|| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20x%20%5Cin%20U%3A%20P%28x%29%20%3D%201/%7CU%7C
+.. |x[0]: P(x[0]) = 1, for all x!=x[0]: P(x) = 0| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20x_%7B0%7D%3A%20P%28x_%7B0%7D%29%20%3D%201%2C%20%5Cforall%20x%5Cneq%20x_%7B0%7D%3A%20P%28x%29%20%3D%200
+.. |x[0]| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20x_%7B0%7D
+.. |A subset of U: Pr[A] = sum of all P(x) where x belongs to A is [0,1] (between 0 and 1)| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20A%20%5Csubseteq%20U%3A%20Pr%5BA%5D%20%3D%20%5Csum%20_%7Bx%20%5Cin%20A%7D%20P%28x%29%20%5Cin%20%5B0%2C1%5D
+.. |Pr[U]=1| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20Pr%5BU%5D%3D1
+.. |A1| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20A_%7B1%7D
+.. |A2| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20A_%7B2%7D
+.. |Pr[A1 U A2] <= Pr[A1] + Pr[A2]| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20Pr%5BA_%7B1%7D%20%5Ccup%20A_%7B2%7D%5D%20%5Cleq%20Pr%5BA_%7B1%7D%5D%20+%20Pr%5BA_%7B2%7D%5D
+.. |Pr[A1 intersection A2] = null then Pr[A1 union A2] = Pr[A1] + Pr[A2]| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20A_%7B1%7D%20%5Ccap%20A_%7B2%7D%20%3D%20%5Cphi%20%5CRightarrow%20Pr%5BA_%7B1%7D%20%5Ccup%20A_%7B2%7D%5D%20%3D%20Pr%5BA_%7B1%7D%5D%20+%20Pr%5BA_%7B2%7D%5D
+.. |X:U --> V| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20X%3AU%20%5Crightarrow%20V
+.. |X: {0,1}^n --> {0,1}; X(y) = lsb(y) in {0,1}| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20X%3A%20%5C%7B0%2C1%5C%7D%5E%7Bn%7D%20%5Crightarrow%20%5C%7B0%2C1%5C%7D%3B%20X%28y%29%20%3D%20lsb%28y%29%20%5Cin%20%5C%7B0%2C1%5C%7D
+.. |{0,1}^n| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20%5C%7B0%2C1%5C%7D%5E%7Bn%7D
+.. |{0,1}| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20%5C%7B0%2C1%5C%7D
+.. |Pr[X=0] = 1/2 ; Pr[X=1] = 1/2| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20Pr%5BX%3D0%5D%20%3D%201/2%20%3B%20Pr%5BX%3D1%5D%20%3D%201/2
+.. |U = {0,1}^n| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20U%20%3D%20%5C%7B0%2C1%5C%7D%5E%7Bn%7D
+.. |r <--R-- U| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20r%20%5Coverset%7BR%7D%7B%5Cleftarrow%7D%20U
+.. |a in U such that Pr[r = a] = 1/sizeof(U)| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20a%20%5Cin%20U%3A%20Pr%5Br%20%3D%20a%5D%20%3D%201/%7CU%7C
+.. |r(x)=x for all x in U| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20r%28x%29%3Dx%5C%20for%5C%20x%20%5Cin%20U
+.. |y <--  A(m)| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20y%20%5Cleftarrow%20A%28m%29
+.. |y <-- A(m; r) where r <--R-- {0,1}^n| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20y%20%5Cleftarrow%20A%28m%3B%20r%29%20%5C%20where%20%5C%20r%20%5Coverset%7BR%7D%7B%5Cleftarrow%7D%20%5C%7B0%2C1%5C%7D%5E%7Bn%7D
