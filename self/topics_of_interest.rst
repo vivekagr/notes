@@ -34,6 +34,8 @@ Objective C Language
 
 I primarily use Mac OS and being a programmer, it is natural for me to be interested in developing native applications for the operating system. Also, since I already have got the basics of C, getting into Obj C shouldn't be a problem. I have also got some ideas for apps so I shouldn't avoid learning this.
 
+Update: Just completed Lynda's Objective C Essential Training. Gonna start Cocoa course within a couple of days.
+
 **Resources**
 
 - http://virtuousgiant.com/best-way-learn-objective-c/
