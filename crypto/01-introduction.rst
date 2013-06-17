@@ -123,7 +123,7 @@ And if |Pr[A1 intersection A2] = null then Pr[A1 union A2] = Pr[A1] + Pr[A2]|
 
 **Random Variable**
 
-A random variable ``X`` is a function |X:U --> V| (from the universe into some set ``V``). Set ``V`` is where the random variable takes its value.
+A random variable ``X`` is a function |X:U --> V| (from the universe into some set ``V``). Set ``V`` is where the random variable takes its value and also defines the distribution upon it.
 
 Example: |X: {0,1}^n --> {0,1}; X(y) = lsb(y) in {0,1}|
 
@@ -147,6 +147,42 @@ Formally, r is the identity function: |r(x)=x for all x in U|
 **Randomized Algorithm** - It takes input ``m`` and has implicit argument ``r``, where ``r`` is sampled anewed every time the function is run. ``n`` is sampled randomly from set of ``n`` bit strings.
 
 |y <-- A(m; r) where r <--R-- {0,1}^n|
+
+
+**Independent Events**
+
+Events A and B are independent if |Pr[A and B] = Pr[A] . Pr[B]|
+
+The occurence of event A tells nothing about B and vice-versa. Similarly, random variables X, Y taking value in V are independent if
+
+|for all A,B in V: Pr[X=a and Y=b] = Pr[X=a] . Pr[Y=b]|
+
+
+XOR
+---
+
+XOR of two binary digits is their sum modulo 2.
+
+**An important property of XOR**
+
+Let Y be a random variable over |{0,1}^n| (distribution maybe non-uniform) and X an independent uniform variable over |{0,1}^n|
+
+Then |Z := Y (xor) X| is a uniform variable over |{0,1}^n|
+
+So, if an arbitrarily malicious distribution is take and XOR'ed with an independent uniform random variable, then the result is uniform random variable. This property is very useful for cryptography.
+
+
+The Birthday Paradox
+--------------------
+
+Let |r1, r2,...,rn in U| be independent identically distributed random variables.
+
+When |n = 1.2 x sizeof(U)^(1/2) then Pr[given i!=j, ri = rj] >= 1/2|
+
+So, when n number of samples are taken from universe U, then there is a good probability that that two of them are equal.
+
+Example: There are 365 days in a year so if |n = 1.2 x sqrt(365) = 24| number of people are taken from a random sample, the probability that two random people from the sample have the same birthday is equal to or more than 1/2. 24 seems to be such a small number yet this phenomenon is observed.
+
 
 
 .. |E(k, m) ==> c| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20E%28k%2C%20m%29%20%5Crightarrow%20c
@@ -176,3 +212,10 @@ Formally, r is the identity function: |r(x)=x for all x in U|
 .. |r(x)=x for all x in U| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20r%28x%29%3Dx%5C%20for%5C%20x%20%5Cin%20U
 .. |y <--  A(m)| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20y%20%5Cleftarrow%20A%28m%29
 .. |y <-- A(m; r) where r <--R-- {0,1}^n| image:: http://latex.codecogs.com/gif.latex?%5Cfn_cm%20%5Csmall%20y%20%5Cleftarrow%20A%28m%3B%20r%29%20%5C%20where%20%5C%20r%20%5Coverset%7BR%7D%7B%5Cleftarrow%7D%20%5C%7B0%2C1%5C%7D%5E%7Bn%7D
+.. |Pr[A and B] = Pr[A] . Pr[B]| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20Pr%5BA%20%5C%20and%20%5C%20B%5D%20%3D%20Pr%5BA%5D%20%5Ccdot%20Pr%5BB%5D
+.. |for all A,B in V: Pr[X=a and Y=b] = Pr[X=a] . Pr[Y=b]| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20%5Cforall%20A%2CB%20%5Cin%20V%3A%20Pr%5BX%3Da%20%5C%20and%20%5C%20Y%3Db%5D%20%3D%20Pr%5BX%3Da%5D%20%5Ccdot%20Pr%5BY%3Db%5D
+.. |{0,1}^n| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20%5C%7B0%2C1%5C%7D%5E%7Bn%7D
+.. |Z := Y (xor) X| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20Z%20%3A%3D%20Y%20%5Coplus%20X
+.. |r1, r2,...,rn in U| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20r_%7B1%7D%2C%20r_%7B2%7D%2C...%2Cr_%7Bn%7D%20%5Cin%20U
+.. |n = 1.2 x sizeof(U)^(1/2) then Pr[given i!=j, ri = rj] >= 1/2| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20n%20%3D%201.2%5C%20x%5C%20%7CU%7C%5E%7B1/2%7D%20%5CRightarrow%20Pr%5B%5Cexists%20%5C%20i%20%5Cneq%20j%3A%20r_%7Bi%7D%20%3D%20r_%7Bj%7D%5D%20%5Cgeq%201/2
+.. |n = 1.2 x sqrt(365) = 24| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20n%20%3D%201.2%5C%20x%20%5Csqrt%7B365%7D%20%3D%2024
