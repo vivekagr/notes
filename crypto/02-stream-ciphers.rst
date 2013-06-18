@@ -4,6 +4,7 @@ Stream Ciphers
 :section: 2
 :course: Cryptography I
 :url: https://www.coursera.org/course/crypto
+:slides: http://bit.ly/128TeFB
 
 
 A cipher is defined over (K, M, C) where K is set of all possbile keys, M is set of all possbile messages and C is set of all possible ciphertexts. A cipher itself is a pair of *efficient* algorithms (E, D) where E is the encryption algorithm and D is the decryption algorithm and it has to satisfy the following condition.
@@ -132,7 +133,7 @@ References
 Attacks on Stream Ciphers and OTP
 ---------------------------------
 
-** Attack 1: Two Time Pad**
+**Attack 1: Two Time Pad**
 
 Never use the same stream cipher key more than once.
 
@@ -172,6 +173,148 @@ Suppose a user sends a message that starts with string "From: Bob" encrypted wit
 So, modifications to ciphertext are undetected and have predictable impact on plaintext. Thus, **OTP is malleable.**
 
 
+Real World Stream Ciphers
+-------------------------
+
+**RC4 (1987) used in WEP, HTTPS**
+
+RC4 takes variable size seed, for e.g. 128 bits and expands it into 2048 bits which is used as internal state for the generator. Then a very simple loop is executed where every iteration outputs 1 byte of output. So, the generator can be run for as long as wanted. Used in WEP and HTTPS.
+
+Weaknesses:
+
+- Bias in initial output Pr[2nd byte = 0] = 2/256 whereas it should be 1/256. Infact the first 256 bits are biased in this way so it is recommended to strip off the first 256 bits of generated values.
+- When a long output of RC4 is takes, the sequence of ``00`` is more likely to occur. Prob(0,0) should be |1/256^2| but it is |1/256^2 + 1/256^3|. This bias kicks in after several gigabytes of generated data but nevertheless, it can still be used to predict the generator.
+- Related key attacks - Like in WEP, the closesly related Initialization Vector can make it possible to recover the secret key.
+
+So, RC4 is not recommended to use in new systems.
+
+
+**CSS used in CDs/DVDs**
+
+CSS stands for Content Scrambling System. It turned out to be a badly broken stream cipher. It is implemented in hardware due to ease and is based on a system called Linear Feedback Shift Register (LFSR).
+
+LFSR is based on register with multiple cells where each cell contains a bit. Then the bits from certain position (called taps) are taken and XORed. Every cycle the values are right shitfted to drop the LSB and the MSB is assigned the value acquired from the previous XOR calculation. This takes very few transistors and is easy to implement in the hardware. So the seed is the initial state of LFSR.
+
+LFSRs are used for
+
+- DVD encryption (CSS): 2 LFSRs
+- GSM encryption (A5/1,2): 3 LFSRs
+- Bluetooth (E0): 4 LFSRs
+
+**Breaking CSS**
+
+CSS's weakness is primarily due to the regulations placed on the export of cryptographic systems from the United States. At the time that CSS was introduced, it was forbidden in the United States for manufacturers to export cryptographic systems employing keys in excess of 40 bits, a key length that had already been shown to be wholly inadequate in the face of increasing computer processing power.
+
+How CSS works - The size of seed is 5 bytes or 40 bits. 2 LFSRs of size 17-bit and 25-bit are used. First 17-bit LFSR contains ``1`` concatnated with 2 bytes from the key and second 25-bit LFSR contains ``1`` concatnated with rest 3 bytes from the key. Both of these LFSR's give 1 byte output each. Then addition and mod 256 (also carry from previous block is added) is performed to give final 1 byte output per cycle.
+
+Breaking - CSS can be broken in just |2^17| iterations. The first few bytes, say 20 bytes plaintext of the encrypted video file is known. This 20 byte plaintext is XORed with the corresponding encrypted content to get the 20 byte of the key (lets say K). Now, for each possible value of first 17-bit register, 20 bytes are generated. Each of those 20 bytes value are subtracted from K to get the possible 20 byte output (lets say X) of the second register. It is easy to say whether X can be a output of 2nd 25-bit LFSR or not. During the iteration, when we hit the value X which can be an output of 2nd LFSR, then we get the correct pair of values of LFSR which can be then used to predict the rest of the key and decrypt the whole movie.
+
+
+**Modern Stream Ciphers - eStream**
+
+eSTREAM is a project to "identify new stream ciphers suitable for widespread adoption", organised by the EU ECRYPT network. It was set up as a result of the failure of all six stream ciphers submitted to the NESSIE project. The call for primitives was first issued in November 2004. The project was completed in April 2008.
+
+The PRGs from eStream project use the seed and in addition to that a nonce. Nonce is a non-repeating value for a given key. It never repeats as long as the key is fixed.
+
+PRG: |{0,1}^s x R --> {0,1}^n|
+
+|E(k, m; r) = m xor PRG(k ;r)|
+
+The pair (k,r) is never used more than once. So, the key can be used many times since differing nonce makes the pair unique.
+
+One of the ciphers that came from eStream project is **Salsa20**. It can used for both hardware and software implementations.
+
+Salsa20: |{0,1}^(128 or 256) x {0,1}^64 --> {0,1}^n  (max n = 2^73 bits)|
+
+It takes 128-bit or 256-bit key and 64-bit nonce.
+
+Salsa20 (k; r) := H(k, (r, 0)) || H(k, (r, 1)) || ...
+
+The function H takes key, nonce and serial number to generate 64 bytes output.
+
+How function H works: (k - 16 bytes, r - 8 bytes, i - 8 bytes) is of size 32 bytes. A block of size 64 bytes is made |[t0, k, t1, r, i, t2, k, t3]| where |t0, t1, t2, t3| are predefined constant in the spec. Then this block is passed through another function h and the result is XOR'ed with the starting block we just described which gives 64 byte output.
+
+
+PRG Security Definition
+-----------------------
+
+Let |G:K --> {0,1}^n|
+
+Goal: define what it means that |[k <--R-- K, output G(k)]| is indistinguishable from |[r <--R-- {0,1}^n, output r]|
+
+**Statistical tests** can be defined to check whether a given string of bits is random or not. It is basically an algorithm that outputs 0 if not random otherwise 1.
+
+Example - A(x) = 1 iff |len(#0(x) - #1(x)) <= 10 x sqrt(n)|. This checks whether the number of occurences of 0s and 1s are not far apart. There are many more tests like these and they can give a rough idea about whether a string is random or not.
+
+The concept of **Advantage** can be used to check if a statistical test is good or not.
+
+Let |G: K --> {0,1}^n| be a PRG and A a statistical test on |{0,1}^n|, then:
+
+|advantage|
+
+Adv closer to 1 => A can distinguish G from random thus A breaks G which means that generator is no good.
+
+Adv closer to 0 => A cannot distinguish G from random.
+
+
+We say that |G: K --> {0,1}^n| is a **secure PRG** if for all *efficient* statistical tests, the advantage is negligible. In other words, no efficient algorithm should be able to distinguish a truly random number and psuedorandom number generated by PRG. One thing to keep in mind is that we are only taking into account the "efficient" statistical test.
+
+Are there any provably secure PRGs? No, we cannot. It is unknown whether there are any provably secure PRGs. But we have heuristic candidates.
+
+
+**A secure PRG is unpredictable**
+
+To prove this, we first prove its contrapositive - PRG predictable |=>| PRG is insecure.
+
+Suppose A is an efficient algorithm which given first i bits can predict i+1 bits such that
+
+|eff_algo|
+
+for non-negligible |e| (e.g. |e| = 1/1000)
+
+If the algorithm is unable to predict the next bit, then the result will be certainly random garbage and so the probability will be 1/2 since there are only two possible value (0 or 1) so it should hit the correct value half number of times. But, if the algorithm is good and able to predict the next bit then the probability will be 1/2 + |e|.
+
+Define statistical test B as:
+
+B(x) = |if A(first i bits of X) = X[i+1] bit then output 1 else output 0|
+
+If A is able to predict the next bit then B outputs 1 else it outputs 0. Now lets try this on on both a truly random number and psuedorandom number.
+
+|when r is a random number: Pr[B(r) = 1] = 1/2|
+
+When r is a truly random number, then algo A would give correct result half of the times. So, the probability that it is correct is also half as shown above.
+
+|when r is a psuedorandom number: Pr[B(G(k)) = 1] > 1/2 + e|
+
+When r is a psuedorandom number, then algo A would be able to identify at least some bits correct so the probability that it is correct greater than 1/2 + |e|.
+
+|Advantage of PRG [B,G] > e|
+
+The advantage of the PRG is greater than |e| that is the difference of the probabilities we calculated above.
+
+So, the algorithm B is able to distinguish the psuedorandom from the random which means that the PRG is insecure. The contrapositive of this is that if the PRG is secure then there are no good statistical tests and so there are no predictors which means the generator is unpredictable.
+
+In fact, the converse is also true. **An unpredictable PRG is secure**. It was proved by Yao in '82.
+
+Let |G: K --> {0,1}^n| be a PRG
+
+Theorem: if |for all i in {0,..,n-1}| PRG G is unpredictable at position i then G is a secure PRG
+
+The idea behind this is that if next-bit predictors cannot distinguish from random then no statistical test can.
+
+
+**Indistinguishable Distributions**
+
+Let |P1| and |P2| be two distributions over |{0,1}^n|
+
+Def: We say that |P1| and |P2| are computationally indistinguishable in polynomial time (denoted |P1 =p P2|)
+
+if for all efficient statistical tests A
+
+|for x<-P1 Pr[A(x)=1] - for x<-P2 Pr[A(x)=1] < negligible|
+
+Using this notation, we can say that a PRG is secure if |prg_secure_def|
+
 
 .. |E: K x M --> C, D: K x C --> M| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20E%3A%20K%20x%20M%20%5Crightarrow%20C%2C%20D%3A%20K%20x%20C%20%5Crightarrow%20M
 .. |for all m in M and k in K: D(k, E(k,m)) = m| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20%5Cforall%20m%20%5Cin%20M%2C%20k%20%5Cin%20K%3A%20D%28k%2C%20E%28k%2Cm%29%29%20%3D%20m
@@ -203,3 +346,28 @@ So, modifications to ciphertext are undetected and have predictable impact on pl
 .. |c1 xor c2 --> m1 xor m2| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20c_%7B1%7D%20%5Coplus%20c_%7B2%7D%20%5Crightarrow%20m_%7B1%7D%20%5Coplus%20m_%7B2%7D
 .. |m1 xor m2 --> m1, m2| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20m_%7B1%7D%20%5Coplus%20m_%7B2%7D%20%5Crightarrow%20m_%7B1%7D%2C%20m_%7B2%7D
 .. |2^64 = 16M| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%202%5E%7B64%7D%20%3D%2016M
+.. |1/256^2| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%201/256%5E%7B2%7D
+.. |1/256^2 + 1/256^3| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%201/256%5E%7B2%7D%20&plus;%201/256%5E%7B3%7D
+.. |{0,1}^s x R --> {0,1}^n| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20%5C%7B0%2C1%5C%7D%5E%7Bs%7D%20x%20R%20%5Crightarrow%20%5C%7B0%2C1%5C%7D%5E%7Bn%7D%20%5C%20where%5C%20n%20%5Cgg%20s
+.. |E(k, m; r) = m xor PRG(k ;r)| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20E%28k%2C%20m%20%3B%20r%29%20%3D%20m%20%5Coplus%20PRG%28k%3B%20r%29
+.. |{0,1}^(128 or 256) x {0,1}^64 --> {0,1}^n  (max n = 2^73 bits)| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20%5C%7B0%2C1%5C%7D%5E%7B128%5C%20or%5C%20256%7D%20%5C%20x%20%5C%7B0%2C1%5C%7D%5E%7B64%7D%20%5Crightarrow%20%5C%7B0%2C1%5C%7D%5E%7Bn%7D%20%5C%20%5C%20%28max%5C%20n%20%3D%202%5E%7B73%7D%20bits%29
+.. |[t0, k, t1, r, i, t2, k, t3]| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20%5Bt_%7B0%7D%2C%20k%2C%20t_%7B1%7D%2C%20r%2C%20i%2C%20t_%7B2%7D%2C%20k%2C%20t_%7B3%7D%5D
+.. |t0, t1, t2, t3| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20t_%7B0%7D%2C%20t_%7B1%7D%2C%20t_%7B2%7D%2C%20t_%7B3%7D
+.. |G:K --> {0,1}^n| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20G%3AK%20%5Crightarrow%20%5C%7B0%2C1%5C%7D%5En
+.. |[k <--R-- K, output G(k)]| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20%5Bk%20%5Coverset%7BR%7D%7B%5Cleftarrow%7D%20K%2C%20output%5C%20G%28k%29%5D
+.. |[r <--R-- {0,1}^n, output r]| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20%5Br%20%5Coverset%7BR%7D%7B%5Cleftarrow%7D%20%5C%7B0%2C1%5C%7D%5En%2C%20output%5C%20r%5D
+.. |len(#0(x) - #1(x)) <= 10 x sqrt(n)| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20%7C%5C%230%28x%29%20-%20%5C%231%28x%29%7C%20%5Cleq%2010%20%5Ccdot%20%5Csqrt%7Bn%7D
+.. |{0,1}^n| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20%5C%7B0%2C1%5C%7D%5En
+.. |advantage| image:: http://latex.codecogs.com/png.latex?%5Cdpi%7B150%7D%20%5Cfn_cm%20Adv_%7BPRG%7D%20%5BA%2CG%5D%20%3A%3D%5Cleft%20%7C%20%5CPr%20_%7Bk%20%5Coverset%7BR%7D%7B%5Cleftarrow%7D%20K%7D%20%5BA%28G%28k%29%29%20%3D%201%5D%20-%20%5CPr%20_%7Bk%20%5Coverset%7BR%7D%7B%5Cleftarrow%7D%20%5C%7B0%2C1%5C%7D%5En%7D%20%5BA%28r%29%20%3D%201%5D%20%5Cright%20%7C%20%5Cin%20%5B0%2C%201%5D
+.. |=>| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20%5CRightarrow
+.. |eff_algo| image:: http://latex.codecogs.com/png.latex?%5Cdpi%7B150%7D%20%5Cfn_cm%20%5Csmall%20%5CPr%20_%7Bk%20%5Coverset%7BR%7D%7B%5Cleftarrow%7D%20K%7D%20%5BA%28G%28k%29%7C_%7B1%2C..%2Ci%7D%29%20%3D%20G%28k%29%7C_%7Bi&plus;1%7D%5D%20%3D%20%5Cfrac%7B1%7D%7B2%7D%20&plus;%20%5Cepsilon
+.. |if A(first i bits of X) = X[i+1] bit then output 1 else output 0| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20if%5C%20A%28X%7C_%7B1%2C..%2Ci%7D%29%20%3D%20X_%7Bi&plus;1%7D%20%5C%20output%5C%201%5C%20else%5C%20output%5C%200
+.. |when r is a random number: Pr[B(r) = 1] = 1/2| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20r%20%5Coverset%7BR%7D%7B%5Cleftarrow%7D%20%5C%7B0%2C1%5C%7D%5En%3A%20Pr%5BB%28r%29%20%3D%201%5D%20%3D%201/2
+.. |when r is a psuedorandom number: Pr[B(G(k)) = 1] > 1/2 + e| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20k%20%5Coverset%7BR%7D%7B%5Cleftarrow%7D%20K%3A%20Pr%5BB%28G%28k%29%29%20%3D%201%5D%20%5Cgeq%201/2%20&plus;%20%5Cvarepsilon
+.. |Advantage of PRG [B,G] > e| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20%5CRightarrow%20Adv_%7BPRG%7D%20%5BB%2C%20G%5D%20%3E%20%5Cvarepsilon
+.. |for all i in {0,..,n-1}| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20%5Cforall%20i%20%5Cin%20%5C%7B0%2C...%2Cn-1%5C%7D
+.. |P1| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20P_1
+.. |P2| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20P_2
+.. |P1 =p P2| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20P_1%20%5Capprox%20_p%20P_2
+.. |for x<-P1 Pr[A(x)=1] - for x<-P2 Pr[A(x)=1] < negligible| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20%5Cleft%20%7C%20%5CPr%20_%7Bx%20%5Cleftarrow%20P_1%7D%20%5BA%28x%29%3D1%5D%20-%20%5CPr%20_%7Bx%20%5Cleftarrow%20P_1%7D%20%5BA%28x%29%3D1%5D%20%5Cright%20%7C%20%3C%20negligible
+.. |prg_secure_def| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20%5C%7B%20k%20%5Coverset%7BR%7D%7B%5Cleftarrow%7D%20K%3A%20G%28k%29%20%5C%7D%20%5Capprox%20_p%20uniform%28%5C%7B0%2C1%5C%7D%5En%29
