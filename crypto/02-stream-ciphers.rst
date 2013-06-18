@@ -316,6 +316,59 @@ if for all efficient statistical tests A
 Using this notation, we can say that a PRG is secure if |prg_secure_def|
 
 
+Semantic Security
+-----------------
+
+Let's recall Shannon's law for perfect secrecy-
+
+(E, D) has perfect secrecy if |for all m0, m1 in M given len(m1) = len(m2)|
+
+|{E(k,m0)} = {E(k,m1)} where k <-- K|
+
+But the above statement do not hold for all the values of especially when the keys are short. Lets weaken this constraint by saying that rather than requiring both the distributions to be equal, let them be computationally indistinguishable.
+
+|{E(k,m0)} =p {E(k,m1)} where k <-- K|
+
+This definition is still too strong, so lets say that rather than holding for all |m0| and |m1| in message space M, it has to hold for only the |m0|, |m1| pairs that the attacker can exhibit.
+
+**Defining Semantic Security**
+
+For b=0,1 define experiments EXP(0) and EXP(1) as:
+
+Lets say there is a challenger and an adversary. Adversary gives two messages |m0| and |m1| to the challenger. Challenger gives back a cipher text and the adversary has to tell whether the cipher text came from |m0| or |m1|. In EXP(0), challenger gives cipher text of |m0| and in EXP(1), challenger gives cipher text of |m1|.
+
+For b=0,1: |w_b| := [event that EXP(b)=1] (we checking for value 1)
+
+|Advantage (Semantic Security) [A, E] := Pr[W0] - Pr[W1] in [0,1]|
+
+Semantic Security Advantage of Adversary A against scheme E is calculated above. If this advantage is close to 1, it means that the adversary was able to identify the correct messages for both challenger however if the advantage is close to 0, it means adversary wasn't able to distinguish.
+
+Def: E is **semantically secure** if for all efficient adversaries A
+
+|SS Adv[A, E]| is negligible.
+
+In other words, no efficient adversary can distinguish the encryption of |m0| from that of |m1|.
+
+|=>| for all explicit |m0, m1 in M|: |{E(k,m0)} =p {E(k,m1)}|
+
+Example: Suppose that given the CT, efficient adversary A can deduce LSB of PT. Let's prove that the encryption scheme E is not semantically secure.
+
+The adversary gives two messages to challenger, where the LSB of |m0| is 0 and LSB of |m1| is 1. Now, when the challenger gives back a CT, the adversary can look the the CT and deduce LSB. If the LSB is 0, then he can safely say that the it was |m0| or vice-versa. Thus the advantage would be abs(0 - 1) = 1 and adversary is able to clearly distinguish encryption of |m0| from |m1|.
+
+The CT should not reveal any sort information about the PT be it LSB or RSB or i'th bit otherwise the encryption wouldn't be semantically secure.
+
+**OTP is semantically secure**
+
+Adversary gives |m0| and |m1|, challenger gives back CT (xor with the key) of either one. The property of XOR that if a random key k is XOR'ed with either |m0| or |m1|, the distribution is exactly same so the adversary isn't able to identify whether the CT corresponds to |m0| or |m1|. The Semantic Security Advantage in this case would be 0. Therefore, OTP is semantically secure. In fact, it is secure for all adversaries, not just the efficient ones.
+
+
+Stream Ciphers are Semantically Secure
+--------------------------------------
+
+Found this proof a bit confusing and hard to note down. Just watch the last video of section 2.
+
+
+
 .. |E: K x M --> C, D: K x C --> M| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20E%3A%20K%20x%20M%20%5Crightarrow%20C%2C%20D%3A%20K%20x%20C%20%5Crightarrow%20M
 .. |for all m in M and k in K: D(k, E(k,m)) = m| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20%5Cforall%20m%20%5Cin%20M%2C%20k%20%5Cin%20K%3A%20D%28k%2C%20E%28k%2Cm%29%29%20%3D%20m
 .. |M = C = {0,1}^n| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20M%20%3D%20C%20%3D%20%5C%7B0%2C1%5C%7D%5E%7Bn%7D
@@ -371,3 +424,12 @@ Using this notation, we can say that a PRG is secure if |prg_secure_def|
 .. |P1 =p P2| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20P_1%20%5Capprox%20_p%20P_2
 .. |for x<-P1 Pr[A(x)=1] - for x<-P2 Pr[A(x)=1] < negligible| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20%5Cleft%20%7C%20%5CPr%20_%7Bx%20%5Cleftarrow%20P_1%7D%20%5BA%28x%29%3D1%5D%20-%20%5CPr%20_%7Bx%20%5Cleftarrow%20P_1%7D%20%5BA%28x%29%3D1%5D%20%5Cright%20%7C%20%3C%20negligible
 .. |prg_secure_def| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20%5C%7B%20k%20%5Coverset%7BR%7D%7B%5Cleftarrow%7D%20K%3A%20G%28k%29%20%5C%7D%20%5Capprox%20_p%20uniform%28%5C%7B0%2C1%5C%7D%5En%29
+.. |for all m0, m1 in M given len(m1) = len(m2)| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20%5Cforall%20m_0%2C%20m_1%20%5Cin%20M%5C%20given%5C%20%7Cm1%7C%20%3D%20%7Cm2%7C
+.. |{E(k,m0)} = {E(k,m1)} where k <-- K| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20%5C%7BE%28k%2Cm_0%29%5C%7D%20%3D%20%5C%7BE%28k%2Cm_1%29%5C%7D%20%5C%20where%20%5C%20k%20%5Cleftarrow%20K
+.. |{E(k,m0)} =p {E(k,m1)} where k <-- K| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20%5C%7BE%28k%2Cm_0%29%5C%7D%20%5Capprox%20_p%20%5C%7BE%28k%2Cm_1%29%5C%7D%20%5C%20where%20%5C%20k%20%5Cleftarrow%20K
+.. |w_b| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20W_b
+.. |Advantage (Semantic Security) [A, E] := Pr[W0] - Pr[W1] in [0,1]| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20Adv_%7BSS%7D%5BA%2C%20E%5D%20%3A%3D%20%7C%20Pr%5BW_0%5D%20-%20Pr%5BW_1%5D%20%7C%20%5Cin%20%5B0%2C%201%5D
+.. |SS Adv[A, E]| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20Adv_%7BSS%7D%5BA%2C%20E%5D
+.. |m0, m1 in M| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20m_0%2C%20m_1%20%5Cin%20M
+.. |{E(k,m0)} =p {E(k,m1)}| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20%7BE%28k%2Cm_0%29%7D%20%5Capprox%20_p%20%7BE%28k%2Cm_1%29%7D
+.. |2^17| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%202%5E%7B17%7D
