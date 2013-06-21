@@ -60,13 +60,13 @@ For OTP, only one key can map m to c. Now,
 
 |lemma1_3|
 
-Thus OTP has perfect secrecy and there is no CT only attack. The the keys are as long as the message which makes it practically hard to use.
+Thus OTP has perfect secrecy and there is no CT only attack. But the keys are as long as the message which makes it practically hard to use.
 
 But according to Shannon's lemma
 
 |perfect secrecy => key_len >= msg_len|
 
-practical ciphers are going to be insecure.
+Thus, practical ciphers are going to be insecure.
 
 
 Stream Ciphers
@@ -377,7 +377,7 @@ Found this proof a bit confusing and hard to note down. Just watch the last vide
 .. |for all m0, m1 in M (len(m0) =len(m1)) and for all c in C| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20%5Cforall%20m_%7B0%7D%2C%20m_%7B1%7D%20%5Cin%20M%20%5C%20%28given%5C%20len%28m_%7B0%7D%29%20%3D%20len%28m_%7B1%7D%29%5C%20and%20%5C%20%5Cforall%20c%20%5Cin%20C
 .. |m0| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20m_%7B0%7D
 .. |m1| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20m_%7B1%7D
-.. |Pr[E(k,m0) = c] = Pr[E(k,m1) = c]| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20Pr%5BE%28k%2Cm_%7B0%7D%29%20%3D%20c%5D%20%3D%20Pr%5BE%28k%2Cm_%7B0%7D%29%20%3D%20c%5D%20%5C%20where%20%5C%20k%20%5Coverset%7BR%7D%7B%5Cleftarrow%7D%20K
+.. |Pr[E(k,m0) = c] = Pr[E(k,m1) = c]| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20Pr%5BE%28k%2Cm_%7B0%7D%29%20%3D%20c%5D%20%3D%20Pr%5BE%28k%2Cm_%7B1%7D%29%20%3D%20c%5D%20%5C%20where%20%5C%20k%20%5Coverset%7BR%7D%7B%5Cleftarrow%7D%20K
 .. |lemma1_1| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20%5Cforall%20m%2C%20c%3A%20%5CPr%5Climits_%7Bk%7D%20%5BE%28k%2Cm%29%20%3D%20c%5D%20%3D%20%5Cfrac%7B%5C%23keys%5C%20k%20%5Cin%20K%3A%20E%28k%2Cm%29%20%3D%20c%7D%7B%7CK%7C%7D
 .. |lemma1_2| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20%5Cforall%20m%2C%20c%3A%20%5C%23%5C%7Bk%20%5Cin%20K%3A%20E%28k%2Cm%29%20%3D%20c%5C%7D%20%3D%20constant
 .. |lemma1_3| image:: http://latex.codecogs.com/png.latex?%5Cfn_cm%20%5Csmall%20if%5C%20E%28k%2Cm%29%20%3D%20c%20%5CRightarrow%20k%20%5Coplus%20m%20%3D%20c%20%5CRightarrow%20k%20%3D%20m%20%5Coplus%20c%20%5CRightarrow%20%5C%23%5C%7Bk%20%5Cin%20K%3A%20E%28k%2Cm%29%20%3D%20c%5C%7D%20%3D%201%5C%20%5Cforall%20m%2Cc

@@ -42,7 +42,7 @@ Application of cryptography-
 
 **Secure Multi-Party computation**
 
-Suppose we are implementing the online voting system, we could have a trusted authority to whom each voter sends his encrypted votes and the authority keeps everything but the winning party's name secret. But what if the trusted authority is not longer trust-able? In cryptography, there is a theorem that says that anything that can be done with trusted authority can also be done without.
+Suppose we are implementing an online voting system, we could have a trusted authority to whom each voter sends his encrypted vote and the authority keeps everything but the winning party's name secret. But what if the trusted authority is not longer trust-able? In cryptography, there is a theorem that says that anything that can be done with trusted authority can also be done without.
 
 So, a protocol can be implemented such that every voter talks to one another anonymously and at the end of the protocol, desired results are outputted.
 
@@ -78,7 +78,7 @@ Message can be broken easily if the key size is known (and even if the key size 
 
 **Rotor Machines** - (The Herbern Machine) It's yet another form of substitution cipher. Rotor Machine is a type writer which contains the substitution table hardcoded in it in a rotor and every time a letter was pressed on the machine, the rotor rotated by one character. Again, this cipher was also broken using frequency tables.
 
-Another rotor machine is The Enigma which is much more complex version of it containing multiple rotors and the key was initial setting of the rotors. It was used during WW2. But it was broken was well by British cryptographers.
+Another rotor machine is The Enigma which is much more complex version of it containing multiple rotors and the key was initial setting of the rotors. It was used during WW2. But it was broken as well by British cryptographers.
 
 **Data Encryption Standard** - In 1974, a group at IBM set together a cipher that was adopted to be used as a standard cipher by the government and was called Data Encryption Standard. Key space for DES is 2^56 and block size is 64 bits which was good enough in 1974. These days, it can very easily be broken using bruteforce attacks.
 

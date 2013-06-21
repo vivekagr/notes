@@ -11,7 +11,7 @@ This is being stored under version control system so that I can track my progres
 C Language
 ----------
 
-I want to get a good grasp of C since many other softwares I deal with are written in it and I want to be able to play with their code. Also I like to go deeper into a system (including OS, programming languages and softwares implemented in C) and understand how it is implemented.
+I want to get a good grasp of C since many other softwares I deal with are written in it and I want to be able to play with their code. Also I like to go deeper into the system (including OS, programming languages and softwares implemented in C) and understand how it is implemented.
 
 **Resources**
 
@@ -46,7 +46,7 @@ Update: Just completed Lynda's Objective C Essential Training. Gonna start Cocoa
 
 
 
-Data Structures and Algorightms
+Data Structures and Algorithms
 -------------------------------
 
 I know a bit about algorithms (mostly those search and sort ones) and almost nothing about data structures. I keep hearing from people that this is an important topic in CS and also this is included in undergrad syllabus for most of the institutions, I'm going to cover this.
