@@ -92,6 +92,10 @@ I'm very much interested in Cryptography and Web Sec but I haven't been able to 
 - https://share.coursera.org/wiki/index.php/Crypto:Further_Reading
 - http://cacr.uwaterloo.ca/hac/
 - http://www.cs.umd.edu/~jkatz/imc.html
+- http://compgeom.cs.uiuc.edu/~jeffe/teaching/algorithms/
+- http://blog.cryptographyengineering.com/p/useful-cryptography-resources.html
+- http://saweis.net/crypto.html
+- http://bradconte.com/crypto_links
 
 Following books recommended by tptacek
 
