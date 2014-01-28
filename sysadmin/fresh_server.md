@@ -1,3 +1,8 @@
+Basic
+-----
+
+Derived from http://spenserj.com/blog/2013/07/15/securing-a-linux-server/
+
     $ sudo addgroup admin
     Adding group `admin' (GID 1000) ...
     Done.
@@ -46,3 +51,17 @@ Now update.
 
     $ sudo apt-get update
     $ sudo apt-get upgrade
+
+Extras
+------
+
+
+Now make `/var/www` directory for hosting sites/pages/apps/whateveryourmothermade. From http://askubuntu.com/questions/19898
+
+    $ sudo mkdir /var/www
+    $ sudo adduser vivek www-data
+    $ sudo chgrp -R www-data /var/www
+    $ sudo chown -R www-data:www-data /var/www
+    $ sudo chmod -R g+rw /var/www
+
+Logout and log back in to see the changes.
