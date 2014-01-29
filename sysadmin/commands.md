@@ -1,10 +1,10 @@
 Compress/De-compress A Directory
 --------------------------------
 
-- Compress
+Compress
     tar -zcvf archive-name.tar.gz directory-name
 
-- De-compress
+De-compress
     tar -zxvf archive-name.tar.gz -C /home/user/targer/dir
 
 
