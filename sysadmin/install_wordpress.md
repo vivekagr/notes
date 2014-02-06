@@ -115,17 +115,11 @@ Make `wordpress.conf` and add the following:
     	fastcgi_index index.php;
     	fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
     #	fastcgi_intercept_errors on;
-    	fastcgi_pass php;
+    	fastcgi_pass unix:/var/run/php5-fpm.sock;
     }
 
 Add site's configuration file at `/etc/nginx/sites-available/mynewsite.com`:
 
-    upstream php {
-        #this should match value of "listen" directive in php-fpm pool
-    	server unix:/var/run/php5-fpm.sock;
-    	}
-    
-    
     server {
     	listen 80;
     	server_name mynewsite.com;
@@ -135,9 +129,7 @@ Add site's configuration file at `/etc/nginx/sites-available/mynewsite.com`:
     	error_log /home/vivek/logs/mynewsite_error.log;
     
     	include global/restrictions.conf;
-    
     	include global/wordpress.conf;
-    
     }
 
 Create symbolic link of this file in `sites-enabled` directory.
