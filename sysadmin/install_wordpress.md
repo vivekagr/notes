@@ -37,3 +37,38 @@ Download Wordpress
 
     wget http://wordpress.org/latest.zip
     sudo mv wordpress /var/www/mynewsite.com
+
+
+Nginx Configuration
+-------------------
+
+    sudo mkdir /etc/nginx/global
+    cd /etc/nginx/global
+
+Make a new file called `restrictions.conf` and add the following content:
+
+    # Global restrictions configuration file.
+    # Designed to be included in any server {} block.</p>
+    location = /favicon.ico {
+    	log_not_found off;
+    	access_log off;
+    }
+    
+    location = /robots.txt {
+    	allow all;
+    	log_not_found off;
+    	access_log off;
+    }
+    
+    # Deny all attempts to access hidden files such as .htaccess, .htpasswd, .DS_Store (Mac).
+    # Keep logging the requests to parse later (or to pass to firewall utilities such as fail2ban)
+    location ~ /\. {
+    	deny all;
+    }
+    
+    # Deny access to any files with a .php extension in the uploads directory
+    # Works in sub-directory installs and also in multisite network
+    # Keep logging the requests to parse later (or to pass to firewall utilities such as fail2ban)
+    location ~* /(?:uploads|files)/.*\.php$ {
+    	deny all;
+    }
